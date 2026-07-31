@@ -35,13 +35,13 @@ export default function ContactCTA() {
             </p>
 
             <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-              <a href={buildTelLink()} className="btn-gold">
+              <Link href={buildTelLink()} className="btn-gold">
                 <PhoneIcon className="h-4 w-4" />
                 Call Now
-              </a>
-              <a href="/contact" className="btn-outline-light">
+              </Link>
+              <Link href="/contact" className="btn">
                 Contact Us
-              </a>
+              </Link>
             </div>
           </Reveal>
         </Container>
