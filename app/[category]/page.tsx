@@ -1,0 +1,79 @@
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import PageHero from "@/components/ui/PageHero";
+import Breadcrumb from "@/components/ui/Breadcrumb";
+import Container from "@/components/ui/Container";
+import Reveal from "@/components/ui/Reveal";
+import ProductGrid from "@/components/products/ProductGrid";
+import { CATEGORIES, getCategory } from "@/constants/categories";
+import { getCategoryItems, getManifest } from "@/utils/manifest";
+
+interface CategoryPageProps {
+  params: Promise<{ category: string }>;
+}
+
+/** Pre-generates the five category pages at build time. */
+export function generateStaticParams() {
+  return CATEGORIES.map((category) => ({ category: category.slug }));
+}
+
+/** SEO metadata per category. */
+export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
+  const { category } = await params;
+  const info = getCategory(category);
+  if (!info) return {};
+  return {
+    title: info.seoTitle,
+    description: info.seoDescription,
+    alternates: { canonical: `/${info.slug}` },
+  };
+}
+
+export default async function CategoryPage({ params }: CategoryPageProps) {
+  const { category: slug } = await params;
+  const info = getCategory(slug);
+  if (!info) notFound();
+
+  const items = getCategoryItems(info.slug);
+  const manifest = getManifest();
+
+  return (
+    <>
+      <PageHero
+        eyebrow={info.tagline}
+        title={info.name}
+        description={info.short}
+        image={manifest.banners[2] ?? null}
+      />
+      <Breadcrumb items={[{ label: "Shop", href: "/shop" }, { label: info.name }]} />
+
+      {/* Description */}
+      <section className="bg-linen py-16 sm:py-20">
+        <Container>
+          <Reveal>
+            <div className="mx-auto max-w-3xl text-center">
+              <p className="eyebrow justify-center">
+                <span className="h-px w-8 bg-gold-deep" aria-hidden="true" />
+                The {info.name} Collection
+                <span className="h-px w-8 bg-gold-deep" aria-hidden="true" />
+              </p>
+              <h2 className="title-lg">{info.tagline}</h2>
+              <p className="mt-6 leading-relaxed text-stone">{info.description}</p>
+            </div>
+          </Reveal>
+        </Container>
+      </section>
+
+      {/* Products */}
+      <section className="pb-16 sm:pb-24">
+        <Container>
+          <p className="mb-8 flex items-center gap-3 text-xs font-semibold tracking-[0.25em] text-stone uppercase">
+            {items.length} {items.length === 1 ? "piece" : "pieces"} in this collection
+            <span className="h-px flex-1 bg-gradient-to-r from-ink/10 to-transparent" aria-hidden="true" />
+          </p>
+          <ProductGrid products={items} />
+        </Container>
+      </section>
+    </>
+  );
+}

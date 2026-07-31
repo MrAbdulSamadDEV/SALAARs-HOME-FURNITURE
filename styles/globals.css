@@ -1,0 +1,263 @@
+@import "tailwindcss";
+
+/*
+ * SALAAR's HOME – design system v3
+ * Premium furniture showroom
+ * Palette: #F8F6F2 · #FFFFFF · #1A1A1A · #8B6B4A · #EFE8DD · #C9A96A · #EAEAEA
+ * Type: Playfair Display (headings) · Inter (body)
+ */
+
+@theme {
+  /* ------------------------------ colors ------------------------------ */
+  --color-cream: #f8f6f2; /* page background */
+  --color-linen: #ffffff; /* cards */
+  --color-beige: #efe8dd; /* alt sections */
+
+  --color-ink: #1a1a1a; /* near-black – text & dark sections */
+  --color-ink-2: #262626; /* raised dark surface */
+  --color-ink-3: #3a3a3a; /* hover on dark */
+
+  --color-wood: #8b6b4a; /* wood brown */
+  --color-wood-deep: #6e5233; /* deep wood brown */
+  --color-wood-light: #a68a68;
+
+  --color-gold: #c9a96a; /* primary accent */
+  --color-gold-soft: #d9be8a; /* gold hover */
+  --color-gold-deep: #a9884a; /* gold on light backgrounds */
+  --color-gold-pale: #f3ebdc; /* subtle gold tint */
+
+  --color-stone: #6f6b64; /* muted body text on light */
+  --color-mist: #9a958c; /* muted text on dark */
+  --color-line: #eaeaea; /* light gray border */
+  --color-good: #2f9e5f; /* availability green */
+
+  /* ------------------------------ fonts ------------------------------- */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: var(--font-playfair), Georgia, "Times New Roman", serif;
+
+  /* ------------------------------ shadows ------------------------------ */
+  --shadow-soft: 0 2px 12px -2px rgb(26 26 26 / 0.07);
+  --shadow-card: 0 12px 32px -14px rgb(26 26 26 / 0.14);
+  --shadow-card-hover: 0 28px 56px -24px rgb(26 26 26 / 0.24);
+  --shadow-gold: 0 12px 28px -10px rgb(201 169 106 / 0.5);
+
+  /* ---------------------------- animations ---------------------------- */
+  --animate-fade-up: fade-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-fade-in: fade-in 1s ease-out both;
+  --animate-page-in: page-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-hero-in: hero-in 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-zoom-slow: zoom-slow 18s ease-in-out infinite alternate;
+  --animate-pulse-ring: pulse-ring 2.4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes page-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes hero-in {
+    from {
+      opacity: 0;
+      transform: translateY(28px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes zoom-slow {
+    from {
+      transform: scale(1);
+    }
+    to {
+      transform: scale(1.08);
+    }
+  }
+  @keyframes pulse-ring {
+    0% {
+      box-shadow: 0 0 0 0 rgb(47 158 95 / 0.45);
+    }
+    70% {
+      box-shadow: 0 0 0 16px rgb(47 158 95 / 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgb(47 158 95 / 0);
+    }
+  }
+}
+
+/* ------------------------------- base -------------------------------- */
+
+html {
+  scroll-behavior: smooth;
+  overflow-x: clip;
+}
+
+body {
+  @apply bg-cream font-sans text-ink antialiased;
+  overflow-x: clip;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  @apply bg-gold text-ink;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-gold-deep);
+  outline-offset: 2px;
+}
+
+/* Refined scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #d9d4c9;
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gold);
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+/* ---------------------------- reusable bits ---------------------------- */
+
+@layer components {
+  /* Buttons – premium pills (Inter SemiBold) */
+  .btn-gold,
+  .btn-dark,
+  .btn-outline-light,
+  .btn-outline-dark {
+    @apply inline-flex cursor-pointer items-center justify-center gap-2.5 rounded-full px-7 py-3.5 text-[12px] font-semibold tracking-[0.14em] uppercase transition-all duration-300 select-none active:translate-y-0;
+  }
+  .btn-gold {
+    @apply relative overflow-hidden bg-gold text-ink hover:-translate-y-0.5 hover:bg-gold-soft hover:shadow-gold;
+  }
+  .btn-gold::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg, transparent 40%, rgb(255 255 255 / 0.4) 50%, transparent 60%);
+    transform: translateX(-130%);
+    transition: transform 0.65s ease;
+  }
+  .btn-gold:hover::after {
+    transform: translateX(130%);
+  }
+  .btn-dark {
+    @apply relative overflow-hidden bg-ink text-white hover:-translate-y-0.5 hover:bg-ink-2 hover:shadow-card;
+  }
+  .btn-outline-light {
+    @apply border border-white/40 text-white hover:-translate-y-0.5 hover:border-gold hover:text-gold;
+  }
+  .btn-outline-dark {
+    @apply border border-ink/20 text-ink hover:-translate-y-0.5 hover:border-gold hover:text-gold-deep hover:shadow-gold;
+  }
+
+  /* Gold eyebrow above section titles */
+  .eyebrow {
+    @apply mb-4 inline-flex items-center gap-3 text-[11px] font-semibold tracking-[0.3em] text-gold-deep uppercase;
+  }
+  .eyebrow-dark {
+    @apply mb-4 inline-flex items-center gap-3 text-[11px] font-semibold tracking-[0.3em] text-gold uppercase;
+  }
+
+  /* Section titles – Playfair Display, large and airy */
+  .title-lg {
+    @apply font-display text-[1.85rem] leading-[1.15] font-semibold tracking-[-0.01em] text-balance sm:text-4xl lg:text-[3.1rem];
+  }
+  .title-md {
+    @apply font-display text-xl leading-snug font-semibold tracking-[-0.01em] sm:text-2xl;
+  }
+
+  /* Cards – 20px radius, soft shadow, clean white */
+  .card {
+    @apply rounded-[20px] bg-linen shadow-soft ring-1 ring-line transition-all duration-500 will-change-transform;
+  }
+  .card-hover:hover {
+    @apply -translate-y-1.5 shadow-card-hover ring-gold/40;
+  }
+
+  /* Consistent vertical rhythm for sections */
+  .section-pad {
+    @apply py-16 sm:py-20 lg:py-24;
+  }
+
+  /* Small utility link with animated underline */
+  .link-underline {
+    @apply relative transition-colors duration-300;
+  }
+  .link-underline::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    height: 1px;
+    width: 100%;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+  }
+  .link-underline:hover::after {
+    transform: scaleX(1);
+  }
+}
+
+/* Gold gradient headline text */
+@utility text-gold-gradient {
+  background-image: linear-gradient(115deg, #e8d5a4, #c9a96a 45%, #a9884a);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Hide scrollbars on horizontal pill rows */
+@utility no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

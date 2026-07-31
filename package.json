@@ -1,0 +1,38 @@
+{
+  "name": "salaars-home",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SALAAR's HOME – Premium furniture showroom website (Next.js 15, TypeScript, Tailwind CSS)",
+  "scripts": {
+    "images": "node scripts/generate-images.mjs",
+    "predev": "node scripts/generate-images.mjs",
+    "dev": "next dev",
+    "prebuild": "node scripts/generate-images.mjs",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "next": "^15.5.4",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
+    "@tailwindcss/postcss": "^4.1.11",
+    "@types/node": "^22.15.30",
+    "@types/react": "^19.1.6",
+    "@types/react-dom": "^19.1.6",
+    "eslint": "^9.30.1",
+    "eslint-config-next": "^15.5.4",
+    "tailwindcss": "^4.1.11",
+    "typescript": "^5.8.3"
+  },
+  "engines": {
+    "node": ">=18.18.0"
+  },
+  "allowScripts": {
+    "sharp@0.34.5": true,
+    "unrs-resolver@1.12.2": true
+  }
+}
