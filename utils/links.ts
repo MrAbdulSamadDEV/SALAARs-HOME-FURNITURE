@@ -1,4 +1,6 @@
-import { CONTACT } from "@/constants/site";
+import { CONTACT } from "@/data/contact";
+import { SOCIAL } from "@/data/social";
+import { CURRENCY } from "@/data/settings";
 
 /** Builds a click-to-call link. */
 export function buildTelLink(): string {
@@ -6,13 +8,22 @@ export function buildTelLink(): string {
 }
 
 /**
+ * Builds the WhatsApp chat link from src/data/social.ts –
+ * never hardcode the URL, edit social.ts instead.
+ */
+export function buildWhatsAppLink(): string {
+  const { phone, message } = SOCIAL.whatsapp;
+  return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+}
+
+/**
  * Formats a price for display.
- * Prices are treated as VND by default – change `currency` if needed.
+ * Prices are treated as VND by default – change CURRENCY in src/data/settings.ts.
  */
 export function formatPrice(price: number): string {
-  return new Intl.NumberFormat("vi-VN", {
+  return new Intl.NumberFormat(CURRENCY.locale, {
     style: "currency",
-    currency: "VND",
+    currency: CURRENCY.code,
     maximumFractionDigits: 0,
   }).format(price);
 }

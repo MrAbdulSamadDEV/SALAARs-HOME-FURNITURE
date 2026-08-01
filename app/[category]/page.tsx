@@ -5,14 +5,16 @@ import Breadcrumb from "@/components/ui/Breadcrumb";
 import Container from "@/components/ui/Container";
 import Reveal from "@/components/ui/Reveal";
 import ProductGrid from "@/components/products/ProductGrid";
-import { CATEGORIES, getCategory } from "@/constants/categories";
-import { getCategoryItems, getManifest } from "@/utils/manifest";
+import { CATEGORIES, getCategory } from "@/data/categories";
+import { BREADCRUMB_HOME } from "@/data/settings";
+import { getCategoryProducts } from "@/data/products";
+import { getManifest } from "@/utils/manifest";
 
 interface CategoryPageProps {
   params: Promise<{ category: string }>;
 }
 
-/** Pre-generates the five category pages at build time. */
+/** Pre-generates the category pages at build time. */
 export function generateStaticParams() {
   return CATEGORIES.map((category) => ({ category: category.slug }));
 }
@@ -34,7 +36,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   const info = getCategory(slug);
   if (!info) notFound();
 
-  const items = getCategoryItems(info.slug);
+  const items = getCategoryProducts(info.slug);
   const manifest = getManifest();
 
   return (
@@ -45,7 +47,9 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
         description={info.short}
         image={manifest.banners[2] ?? null}
       />
-      <Breadcrumb items={[{ label: "Shop", href: "/shop" }, { label: info.name }]} />
+      <Breadcrumb
+        items={[{ label: BREADCRUMB_HOME, href: "/" }, { label: "Shop", href: "/shop" }, { label: info.name }]}
+      />
 
       {/* Description */}
       <section className="bg-linen py-16 sm:py-20">

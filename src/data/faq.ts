@@ -1,67 +1,23 @@
 import type { FAQGroup } from "@/types";
 
 /**
- * Static content used across the website.
- * Edit this file to change feature copy, FAQs, etc.
- * All copy here is sample content – replace it freely.
+ * SALAAR'S HOME – FAQ content.
+ * Edit this file to change the FAQ page copy and the question/answer groups.
  */
 
-/* ---------------------------- why choose us ------------------------------ */
-
-export const FEATURES = [
-  {
-    icon: "hammer",
-    title: "Premium Craftsmanship",
-    text: "Every joint, edge and finish is handled by skilled craftsmen who take pride in their work.",
+export const FAQ_PAGE = {
+  hero: {
+    eyebrow: "Good to Know",
+    title: "Frequently Asked Questions",
+    description: "Everything you need to know about delivery, custom orders, payment and warranty.",
   },
-  {
-    icon: "shield",
-    title: "Honest Materials",
-    text: "Solid wood, quality hardware and durable finishes – no shortcuts, no hidden surprises.",
+  stillHaveQuestion: {
+    title: "Still have a question?",
+    description: "Call us on {phone} – we usually reply within minutes.",
+    call: "Call {phone}",
+    contactPage: "Contact Page",
   },
-  {
-    icon: "ruler",
-    title: "Custom Furniture",
-    text: "Need a special size or finish? We build custom pieces to fit your space perfectly.",
-  },
-  {
-    icon: "truck",
-    title: "Delivery & Assembly",
-    text: "Careful transport to your door with professional assembly – you simply enjoy it.",
-  },
-  {
-    icon: "tag",
-    title: "Fair, Transparent Pricing",
-    text: "Honest showroom prices, discussed openly. No hidden costs, ever.",
-  },
-  {
-    icon: "phone",
-    title: "Dedicated Support",
-    text: "Questions before or after your purchase? Our team is one message away.",
-  },
-];
-
-/** Numbers shown in the "Why Choose Us" stats band. */
-export const STATS = [
-  { value: 12, suffix: "+", label: "Years of Craftsmanship" },
-  { value: 5, suffix: "", label: "Signature Categories" },
-  { value: 800, suffix: "+", label: "Handcrafted Designs" },
-  { value: 1000, suffix: "+", label: "Happy Homes" },
-];
-
-/* ------------------------------ collections ------------------------------- */
-
-/* --------------------------- product details ------------------------------ */
-
-/** Standard perks shown on every product details page. */
-export const PRODUCT_PERKS = [
-  "Solid wood construction",
-  "Custom sizes available",
-  "Professional assembly",
-  "Structural warranty",
-];
-
-/* ---------------------------------- FAQ ---------------------------------- */
+};
 
 export const FAQ_GROUPS: FAQGroup[] = [
   {

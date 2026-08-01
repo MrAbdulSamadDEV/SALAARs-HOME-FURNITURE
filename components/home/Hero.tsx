@@ -3,40 +3,25 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import SmartImage from "@/components/ui/SmartImage";
+import { HERO_ACTIONS, HERO_AUTOPLAY_MS, HERO_SLIDES } from "@/data/home";
 import { ChevronLeftIcon, ChevronRightIcon } from "@/components/icons";
 
-/** Rotating copy shown across slides (animates on every slide change). */
-const SLIDE_COPY = [
-  {
-    eyebrow: "Premium Furniture Showroom",
-    title: "Timeless Furniture, Crafted for Your Home",
-    description:
-      "Discover handcrafted bedroom sets, wardrobes and more – built from solid wood to bring warmth and elegance to every room.",
-  },
-  {
-    eyebrow: "Honest Materials · Skilled Hands",
-    title: "Solid Wood That Ages Beautifully",
-    description:
-      "Every piece is finished by artisans who respect the wood and the people who will live with it – made to last for generations.",
-  },
-  {
-    eyebrow: "Designed Around Your Home",
-    title: "Custom Pieces, Made to Measure",
-    description:
-      "Special sizes, finishes and colors – tell us what your space needs and we will craft it exactly for you.",
-  },
-];
+type Orientation = "landscape" | "portrait";
 
 /**
  * Full-width hero slider fed by the banner images in public/banners/.
- * The section adapts to the banners' ~2:1 aspect ratio (object-cover,
- * no distortion) with a responsive height on mobile and tablet.
- * Auto-plays every 5 seconds, supports arrows, dots and swipe. Pauses on hover.
- * A single image renders as a static banner instead.
+ *
+ * – Auto-detects every image's orientation once it loads:
+ *   landscape (incl. wide banners) → object-cover, portrait (3:4, 4:5) → object-contain,
+ *   so no faces or furniture are ever cropped and the whole image stays visible.
+ * – Reduced height on mobile (16/10) → taller on tablet and desktop (2:1).
+ * – Smooth fade between slides, autoplay (paused on hover), swipe on touch
+ *   devices, arrow buttons on desktop only, pagination dots everywhere.
  */
 export default function Hero({ initialSlides }: { initialSlides: string[] }) {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
+  const [orientation, setOrientation] = useState<Record<string, Orientation>>({});
   const touchX = useRef<number | null>(null);
   const slides = initialSlides;
   const isSlider = slides.length > 1;
@@ -46,16 +31,16 @@ export default function Hero({ initialSlides }: { initialSlides: string[] }) {
     [slides.length]
   );
 
-  // Auto-play every 5s – resets whenever the slide changes manually
+  /* Auto-play – resets whenever the slide changes manually */
   useEffect(() => {
     if (!isSlider || paused) return;
-    const timer = setInterval(() => go(1), 5000);
+    const timer = setInterval(() => go(1), HERO_AUTOPLAY_MS);
     return () => clearInterval(timer);
   }, [isSlider, paused, index, go]);
 
   if (slides.length === 0) return null;
 
-  const copy = SLIDE_COPY[index % SLIDE_COPY.length];
+  const copy = HERO_SLIDES[index % HERO_SLIDES.length];
 
   return (
     <section className="px-0 pt-0 sm:px-6 sm:pt-6">
@@ -74,27 +59,43 @@ export default function Hero({ initialSlides }: { initialSlides: string[] }) {
         }}
         style={{ touchAction: "pan-y" }}
       >
-        {/* Banner stage – aspect ratio adapts to the ~2:1 banner images */}
-        <div className="relative flex aspect-[4/3] w-full items-center sm:aspect-[16/9] lg:aspect-[2/1]">
+        {/* Banner stage – shorter on mobile, wide on desktop */}
+        <div className="relative flex aspect-[16/10] w-full items-center sm:aspect-[16/9] lg:aspect-[2/1]">
           {/* Slides */}
-          {slides.map((slide, i) => (
-            <div
-              key={slide}
-              className={`absolute inset-0 transition-opacity duration-1000 ease-out ${
-                i === index ? "opacity-100" : "opacity-0"
-              }`}
-              aria-hidden={i !== index}
-            >
-              <SmartImage
-                src={slide}
-                alt=""
-                fill
-                priority={i === 0}
-                sizes="100vw"
-                className={`h-full w-full object-cover ${i === index ? "animate-zoom-slow" : ""}`}
-              />
-            </div>
-          ))}
+          {slides.map((slide, i) => {
+            const fit =
+              orientation[slide] === "portrait" ? "object-contain" : "object-cover";
+
+            return (
+              <div
+                key={slide}
+                className={`absolute inset-0 transition-opacity duration-1000 ease-out ${
+                  i === index ? "opacity-100" : "opacity-0"
+                }`}
+                aria-hidden={i !== index}
+              >
+                <SmartImage
+                  src={slide}
+                  alt=""
+                  fill
+                  priority={i === 0}
+                  sizes="100vw"
+                  onLoad={(e) => {
+                    const img = e.currentTarget;
+                    if (!img || orientation[slide]) return;
+                    setOrientation((prev) => ({
+                      ...prev,
+                      [slide]:
+                        img.naturalWidth >= img.naturalHeight ? "landscape" : "portrait",
+                    }));
+                  }}
+                  className={`h-full w-full ${fit} ${
+                    i === index && fit === "object-cover" ? "animate-zoom-slow" : ""
+                  }`}
+                />
+              </div>
+            );
+          })}
 
           {/* Overlays */}
           <div
@@ -107,41 +108,41 @@ export default function Hero({ initialSlides }: { initialSlides: string[] }) {
           />
 
           {/* Content – keyed to re-animate on every slide change */}
-          <div className="relative mx-auto w-full max-w-[1400px] px-5 py-16 sm:px-8 sm:py-20 lg:px-12">
+          <div className="relative mx-auto w-full max-w-[1400px] px-5 py-10 sm:px-8 sm:py-16 lg:px-12 lg:py-20">
             <div key={index} className="max-w-2xl">
               <p className="animate-hero-in inline-flex items-center gap-2.5 rounded-full border border-gold/40 bg-ink/30 px-4 py-2 text-[11px] font-semibold tracking-[0.28em] text-gold uppercase backdrop-blur-sm">
                 <span className="h-1.5 w-1.5 rounded-full bg-gold" aria-hidden="true" />
                 {copy.eyebrow}
               </p>
 
-              <h1 className="mt-6 animate-hero-in font-display text-[2.1rem] leading-[1.12] font-semibold text-white text-balance sm:text-5xl lg:text-6xl [animation-delay:120ms]">
+              <h1 className="mt-5 animate-hero-in font-display text-[1.9rem] leading-[1.12] font-semibold text-white text-balance sm:text-5xl lg:text-6xl [animation-delay:120ms]">
                 <span className="text-gold-gradient">{copy.title}</span>
               </h1>
 
-              <p className="mt-5 max-w-xl animate-hero-in text-[15px] leading-relaxed text-white/75 sm:text-lg [animation-delay:240ms]">
+              <p className="mt-4 max-w-xl animate-hero-in text-[14px] leading-relaxed text-white/75 sm:mt-5 sm:text-lg [animation-delay:240ms]">
                 {copy.description}
               </p>
 
-              <div className="mt-9 flex animate-hero-in flex-wrap items-center gap-4 [animation-delay:360ms]">
-                <Link href="/shop" className="btn-gold">
-                  Shop Collection
+              <div className="mt-7 flex animate-hero-in flex-wrap items-center gap-4 [animation-delay:360ms]">
+                <Link href={HERO_ACTIONS.shop.href} prefetch className="btn-gold">
+                  {HERO_ACTIONS.shop.label}
                 </Link>
-                <Link href="/contact" className="btn-outline-light">
-                  Contact Us
+                <Link href={HERO_ACTIONS.contact.href} prefetch className="btn-outline-light">
+                  {HERO_ACTIONS.contact.label}
                 </Link>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Arrows */}
+        {/* Arrows – desktop & tablet only */}
         {isSlider && (
           <>
             <button
               type="button"
               onClick={() => go(-1)}
               aria-label="Previous slide"
-              className="absolute top-1/2 left-3 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/30 bg-white/10 text-white backdrop-blur-md transition-all duration-300 hover:border-gold hover:bg-gold hover:text-ink sm:left-6 sm:h-12 sm:w-12"
+              className="absolute top-1/2 left-3 z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/30 bg-white/10 text-white backdrop-blur-md transition-all duration-300 hover:border-gold hover:bg-gold hover:text-ink sm:left-6 sm:flex sm:h-12 sm:w-12"
             >
               <ChevronLeftIcon className="h-5 w-5" />
             </button>
@@ -149,16 +150,16 @@ export default function Hero({ initialSlides }: { initialSlides: string[] }) {
               type="button"
               onClick={() => go(1)}
               aria-label="Next slide"
-              className="absolute top-1/2 right-3 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/30 bg-white/10 text-white backdrop-blur-md transition-all duration-300 hover:border-gold hover:bg-gold hover:text-ink sm:right-6 sm:h-12 sm:w-12"
+              className="absolute top-1/2 right-3 z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/30 bg-white/10 text-white backdrop-blur-md transition-all duration-300 hover:border-gold hover:bg-gold hover:text-ink sm:right-6 sm:flex sm:h-12 sm:w-12"
             >
               <ChevronRightIcon className="h-5 w-5" />
             </button>
           </>
         )}
 
-        {/* Dots */}
+        {/* Dots – all devices */}
         {isSlider && (
-          <div className="absolute bottom-7 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2.5">
+          <div className="absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2.5 sm:bottom-7">
             {slides.map((slide, i) => (
               <button
                 key={slide}

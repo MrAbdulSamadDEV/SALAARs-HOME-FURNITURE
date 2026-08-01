@@ -3,55 +3,82 @@ import PageHero from "@/components/ui/PageHero";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import Container from "@/components/ui/Container";
 import Reveal from "@/components/ui/Reveal";
-import { CONTACT, SITE } from "@/constants/site";
+import { CONTACT, CONTACT_PAGE } from "@/data/contact";
+import { PAGE_SEO } from "@/data/seo";
+import { SITE } from "@/data/site";
+import { SOCIAL } from "@/data/social";
 import { getManifest } from "@/utils/manifest";
 import { buildTelLink } from "@/utils/links";
-import { ClockIcon, FacebookIcon, MapPinIcon, PhoneIcon, TikTokIcon } from "@/components/icons";
+import {
+  ClockIcon,
+  FacebookIcon,
+  MapPinIcon,
+  PhoneIcon,
+  TikTokIcon,
+} from "@/components/icons";
 
 export const metadata: Metadata = {
-  title: "Contact Us",
+  title: PAGE_SEO.contact.title,
   description: `Get in touch with ${SITE.name} – visit the showroom or call us on ${CONTACT.phoneDisplay}. We usually reply within minutes.`,
   alternates: { canonical: "/contact" },
 };
 
-const contactItems = [
-  {
-    icon: MapPinIcon,
-    title: "Visit the Showroom",
-    lines: [CONTACT.address],
-    href: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(CONTACT.address)}`,
-    cta: "View on Google Maps",
-    external: true,
-  },
-  {
-    icon: PhoneIcon,
-    title: "Call Us",
-    lines: [`Phone: ${CONTACT.phoneDisplay}`, "We pick up during opening hours."],
-    href: buildTelLink(),
-    cta: "Call now",
-  },
-  {
-    icon: ClockIcon,
-    title: "Opening Hours",
-    lines: [CONTACT.hours],
-  },
-  {
-    icon: FacebookIcon,
-    title: "Facebook",
-    lines: ["Follow us for new arrivals and offers."],
-    href: CONTACT.facebook,
-    cta: "Follow us",
-    external: true,
-  },
-  {
-    icon: TikTokIcon,
-    title: "TikTok",
-    lines: ["Behind-the-scenes and fresh drops."],
-    href: CONTACT.tiktok,
-    cta: "Follow us",
-    external: true,
-  },
-];
+/** Icon map for the data-driven contact cards (keys stored in src/data/contact.ts). */
+const contactItems = CONTACT_PAGE.cards.map((card) => {
+  switch (card.icon) {
+    case "map-pin":
+      return {
+        icon: MapPinIcon,
+        title: card.title,
+        lines: [CONTACT.address],
+        href: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(CONTACT.address)}`,
+        cta: card.cta,
+        external: true,
+      };
+    case "phone":
+      return {
+        icon: PhoneIcon,
+        title: card.title,
+        lines: card.lines,
+        href: buildTelLink(),
+        cta: card.cta,
+      };
+    case "clock":
+      return {
+        icon: ClockIcon,
+        title: card.title,
+        lines: card.lines,
+        cta: card.cta,
+      };
+    case "facebook":
+      return {
+        icon: FacebookIcon,
+        title: card.title,
+        lines: card.lines,
+        href: SOCIAL.facebook.url,
+        cta: card.cta,
+        external: true,
+      };
+    case "tiktok":
+      return {
+        icon: TikTokIcon,
+        title: card.title,
+        lines: card.lines,
+        href: SOCIAL.tiktok.url,
+        cta: card.cta,
+        external: true,
+      };
+    default:
+      return null;
+  }
+}).filter(Boolean) as {
+  icon: typeof MapPinIcon;
+  title: string;
+  lines: string[];
+  href?: string;
+  cta?: string;
+  external?: boolean;
+}[];
 
 export default function ContactPage() {
   const manifest = getManifest();
@@ -59,12 +86,12 @@ export default function ContactPage() {
   return (
     <>
       <PageHero
-        eyebrow="We're Here to Help"
-        title="Contact Us"
-        description="Call or drop by the showroom – we usually reply within minutes."
+        eyebrow={CONTACT_PAGE.hero.eyebrow}
+        title={CONTACT_PAGE.hero.title}
+        description={CONTACT_PAGE.hero.description}
         image={manifest.banners[2] ?? null}
       />
-      <Breadcrumb items={[{ label: "Contact" }]} />
+      <Breadcrumb items={[{ label: "Home", href: "/" }, { label: CONTACT_PAGE.hero.title }]} />
 
       {/* Contact info cards */}
       <section className="bg-linen py-16 sm:py-20">

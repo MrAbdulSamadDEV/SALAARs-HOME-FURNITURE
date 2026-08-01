@@ -6,11 +6,12 @@ import Breadcrumb from "@/components/ui/Breadcrumb";
 import Reveal from "@/components/ui/Reveal";
 import ProductGallery from "@/components/products/ProductGallery";
 import RelatedProducts from "@/components/products/RelatedProducts";
-import { getCategory } from "@/constants/categories";
-import { getCategoryItems, getManifest, getProductBySlug, getRelatedProducts } from "@/utils/manifest";
+import { getCategory } from "@/data/categories";
+import { CONTACT } from "@/data/contact";
+import { PRODUCT_PAGE, PRODUCT_PERKS, PRODUCT_CARD, BREADCRUMB_HOME } from "@/data/settings";
+import { SITE } from "@/data/site";
+import { getAllProducts, getProductBySlug, getProductImages, getRelatedProducts } from "@/data/products";
 import { buildTelLink, formatPrice } from "@/utils/links";
-import { PRODUCT_PERKS } from "@/constants/content";
-import { CONTACT, SITE } from "@/constants/site";
 import { CheckIcon, ClockIcon, HammerIcon, PhoneIcon, RulerIcon, TruckIcon } from "@/components/icons";
 
 interface ProductPageProps {
@@ -19,10 +20,7 @@ interface ProductPageProps {
 
 /** Pre-generates every product details page at build time. */
 export function generateStaticParams() {
-  const manifest = getManifest();
-  return Object.values(manifest.products)
-    .flat()
-    .map((product) => ({ slug: product.slug }));
+  return getAllProducts().map((product) => ({ slug: product.slug }));
 }
 
 /** SEO metadata + Open Graph image for the product page. */
@@ -55,7 +53,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
   if (!product) notFound();
 
   const category = getCategory(product.category);
-  const galleryImages = getCategoryItems(product.category).map((p) => p.image);
+  const galleryImages = getProductImages(product);
   const related = getRelatedProducts(product);
 
   /* Structured data for search engines */
@@ -76,16 +74,17 @@ export default async function ProductPage({ params }: ProductPageProps) {
   };
 
   const specItems = [
-    { icon: HammerIcon, label: "Material", value: product.material ?? category?.material },
-    { icon: RulerIcon, label: "Dimensions", value: product.dimensions ?? category?.dimensions },
-    { icon: TruckIcon, label: "Delivery", value: product.deliveryTime ?? category?.deliveryTime },
-    { icon: ClockIcon, label: "Availability", value: product.availability ?? "In Stock" },
+    { icon: HammerIcon, label: PRODUCT_PAGE.specs.material, value: product.material ?? category?.material },
+    { icon: RulerIcon, label: PRODUCT_PAGE.specs.dimensions, value: product.dimensions ?? category?.dimensions },
+    { icon: TruckIcon, label: PRODUCT_PAGE.specs.delivery, value: product.deliveryTime ?? category?.deliveryTime },
+    { icon: ClockIcon, label: PRODUCT_PAGE.specs.availability, value: product.availability ?? "In Stock" },
   ];
 
   return (
     <>
       <Breadcrumb
         items={[
+          { label: BREADCRUMB_HOME, href: "/" },
           { label: "Shop", href: "/shop" },
           { label: category?.name ?? "Products", href: `/${product.category}` },
           { label: product.name },
@@ -111,12 +110,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
               </h1>
 
               <p className="mt-6 font-display text-2xl font-semibold tracking-wide text-gold-deep sm:text-3xl">
-                {product.price ? formatPrice(product.price) : "Price on request"}
+                {product.price ? formatPrice(product.price) : PRODUCT_CARD.priceOnRequest}
               </p>
               <p className="mt-2 text-sm text-stone">
-                {product.price
-                  ? "Best price confirmed directly – give us a call."
-                  : "Call us – we will share the best price for this piece."}
+                {product.price ? PRODUCT_PAGE.priceNoteWithPrice : PRODUCT_PAGE.priceNoteNoPrice}
               </p>
 
               <p className="mt-8 leading-relaxed text-stone">
@@ -149,7 +146,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             <Reveal delay={140}>
               <div className="mt-6 rounded-2xl bg-linen p-6 shadow-soft ring-1 ring-line">
                 <h2 className="text-[11px] font-semibold tracking-[0.25em] text-mist uppercase">
-                  Features
+                  {PRODUCT_PAGE.featuresTitle}
                 </h2>
                 <ul className="mt-4 grid gap-3 sm:grid-cols-2">
                   {PRODUCT_PERKS.map((perk) => (
@@ -169,15 +166,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
               <div className="mt-9 flex flex-wrap gap-4">
                 <a href={buildTelLink()} className="btn-gold">
                   <PhoneIcon className="h-4 w-4" />
-                  Call {CONTACT.phoneDisplay}
+                  {PRODUCT_PAGE.call.replace("{phone}", CONTACT.phoneDisplay)}
                 </a>
-                <Link href="/contact" className="btn-outline-dark">
-                  Contact Us
+                <Link href="/contact" prefetch className="btn-outline-dark">
+                  {PRODUCT_PAGE.contactUs}
                 </Link>
               </div>
-              <p className="mt-5 text-xs leading-relaxed text-stone">
-                Custom sizes and finishes available for this piece – just ask!
-              </p>
+              <p className="mt-5 text-xs leading-relaxed text-stone">{PRODUCT_PAGE.customNote}</p>
             </Reveal>
           </div>
         </Container>

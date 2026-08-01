@@ -5,30 +5,32 @@ import Breadcrumb from "@/components/ui/Breadcrumb";
 import Container from "@/components/ui/Container";
 import Reveal from "@/components/ui/Reveal";
 import FaqList from "@/components/home/FaqList";
-import { FAQ_GROUPS } from "@/constants/content";
-import { CONTACT } from "@/constants/site";
+import { FAQ_GROUPS, FAQ_PAGE } from "@/data/faq";
+import { CONTACT } from "@/data/contact";
+import { PAGE_SEO } from "@/data/seo";
 import { getManifest } from "@/utils/manifest";
 import { buildTelLink } from "@/utils/links";
 
 export const metadata: Metadata = {
-  title: "Frequently Asked Questions",
-  description:
-    "Answers about delivery, custom furniture, payment methods, contact details, delivery times and warranty at SALAAR's HOME.",
+  title: PAGE_SEO.faq.title,
+  description: PAGE_SEO.faq.description,
   alternates: { canonical: "/faq" },
 };
 
 export default function FaqPage() {
   const manifest = getManifest();
+  const hero = FAQ_PAGE.hero;
+  const still = FAQ_PAGE.stillHaveQuestion;
 
   return (
     <>
       <PageHero
-        eyebrow="Good to Know"
-        title="Frequently Asked Questions"
-        description="Everything you need to know about delivery, custom orders, payment and warranty."
+        eyebrow={hero.eyebrow}
+        title={hero.title}
+        description={hero.description}
         image={manifest.banners[2] ?? null}
       />
-      <Breadcrumb items={[{ label: "FAQ" }]} />
+      <Breadcrumb items={[{ label: "Home", href: "/" }, { label: hero.title }]} />
 
       <section className="bg-linen py-16 sm:py-20">
         <Container className="max-w-4xl">
@@ -50,21 +52,17 @@ export default function FaqPage() {
           <Reveal>
             <div className="mt-14 rounded-[24px] bg-ink p-8 text-center sm:p-10">
               <h2 className="font-display text-2xl font-semibold text-white sm:text-3xl">
-                Still have a question?
+                {still.title}
               </h2>
               <p className="mt-3 text-sm text-white/70">
-                Call us on{" "}
-                <a href={buildTelLink()} className="font-semibold text-gold hover:underline">
-                  {CONTACT.phoneDisplay}
-                </a>{" "}
-                – we usually reply within minutes.
+                {still.description.replace("{phone}", CONTACT.phoneDisplay)}
               </p>
               <div className="mt-7 flex flex-wrap justify-center gap-4">
                 <a href={buildTelLink()} className="btn-gold">
-                  Call {CONTACT.phoneDisplay}
+                  {still.call.replace("{phone}", CONTACT.phoneDisplay)}
                 </a>
-                <Link href="/contact" className="btn-outline-light">
-                  Contact Page
+                <Link href="/contact" prefetch className="btn-outline-light">
+                  {still.contactPage}
                 </Link>
               </div>
             </div>

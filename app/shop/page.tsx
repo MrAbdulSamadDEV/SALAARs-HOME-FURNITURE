@@ -2,12 +2,14 @@ import type { Metadata } from "next";
 import PageHero from "@/components/ui/PageHero";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import ShopBrowser from "@/components/products/ShopBrowser";
-import { getManifest, getAllProducts } from "@/utils/manifest";
+import { BREADCRUMB_HOME, SHOP } from "@/data/settings";
+import { PAGE_SEO } from "@/data/seo";
+import { getAllProducts } from "@/data/products";
+import { getManifest } from "@/utils/manifest";
 
 export const metadata: Metadata = {
-  title: "Shop All Furniture",
-  description:
-    "Browse the full SALAAR's HOME collection – bedroom sets, wardrobes, side tables and dressers. Filter by category, price, material or color.",
+  title: PAGE_SEO.shop.title,
+  description: PAGE_SEO.shop.description,
   alternates: { canonical: "/shop" },
 };
 
@@ -23,12 +25,12 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
   return (
     <>
       <PageHero
-        eyebrow="The Collection"
-        title="Shop All Furniture"
-        description="Every piece in our showroom, in one place. Filter by category, price or material to find exactly what your home needs."
+        eyebrow={SHOP.hero.eyebrow}
+        title={SHOP.hero.title}
+        description={SHOP.hero.description}
         image={manifest.banners[1] ?? null}
       />
-      <Breadcrumb items={[{ label: "Shop" }]} />
+      <Breadcrumb items={[{ label: BREADCRUMB_HOME, href: "/" }, { label: SHOP.hero.title }]} />
 
       {/* Interactive grid: filters + search + sorting (products from the server) */}
       <ShopBrowser products={products} initialQuery={q ?? ""} />

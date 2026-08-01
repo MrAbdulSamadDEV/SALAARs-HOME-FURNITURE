@@ -4,7 +4,9 @@ import FeaturedCategories from "@/components/home/FeaturedCategories";
 import BestSellingProducts from "@/components/home/BestSellingProducts";
 import WhyChooseUs from "@/components/home/WhyChooseUs";
 import ContactCTA from "@/components/home/ContactCTA";
-import { CONTACT, SITE } from "@/constants/site";
+import { CONTACT } from "@/data/contact";
+import { SITE } from "@/data/site";
+import { SOCIAL } from "@/data/social";
 import { getManifest } from "@/utils/manifest";
 
 export const metadata: Metadata = {
@@ -22,7 +24,7 @@ const jsonLd = {
   name: SITE.name,
   url: SITE.url,
   telephone: CONTACT.phone,
-  sameAs: [CONTACT.facebook, CONTACT.tiktok],
+  sameAs: [SOCIAL.facebook.url, SOCIAL.tiktok.url],
   priceRange: "$$",
 };
 
@@ -34,7 +36,7 @@ export default function HomePage() {
     <>
       <Hero initialSlides={manifest.hero} />
       <FeaturedCategories manifest={manifest} />
-      <BestSellingProducts manifest={manifest} />
+      <BestSellingProducts />
       <WhyChooseUs />
       <ContactCTA />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />

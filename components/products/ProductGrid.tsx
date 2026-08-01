@@ -1,4 +1,5 @@
 import ProductCard from "@/components/products/ProductCard";
+import { SHOP } from "@/data/settings";
 import type { ProductItem } from "@/types";
 
 /**
@@ -8,10 +9,8 @@ export default function ProductGrid({ products }: { products: ProductItem[] }) {
   if (products.length === 0) {
     return (
       <div className="rounded-3xl border border-dashed border-line bg-linen px-6 py-20 text-center shadow-soft">
-        <p className="title-md text-ink">No products match your filters</p>
-        <p className="mx-auto mt-3 max-w-md text-sm text-stone">
-          Try adjusting your search or clearing some filters to see more pieces.
-        </p>
+        <p className="title-md text-ink">{SHOP.emptyTitle}</p>
+        <p className="mx-auto mt-3 max-w-md text-sm text-stone">{SHOP.emptyText}</p>
       </div>
     );
   }

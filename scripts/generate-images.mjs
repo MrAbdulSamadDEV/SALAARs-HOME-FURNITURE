@@ -237,7 +237,13 @@ function enrichProduct(item, cat, index) {
 
 function buildProductItems(slug, label) {
   const dir = path.join(PUBLIC_DIR, "products", slug);
-  const cat = CATEGORIES[slug] ?? { material: "Solid Wood", dimensions: "Custom", deliveryTime: "5–10 days", colors: ["Natural"] };
+  const cat =
+    CATEGORIES.find((c) => c.slug === slug) ?? {
+      material: "Solid Wood",
+      dimensions: "Custom",
+      deliveryTime: "5–10 days",
+      colors: ["Natural"],
+    };
 
   // Optional info.json → custom names / prices / materials (see header comment)
   let info = {};

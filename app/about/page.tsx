@@ -6,15 +6,17 @@ import Container from "@/components/ui/Container";
 import Reveal from "@/components/ui/Reveal";
 import FeatureCard from "@/components/ui/FeatureCard";
 import SmartImage from "@/components/ui/SmartImage";
-import { FEATURES, STATS } from "@/constants/content";
-import { CONTACT, SITE } from "@/constants/site";
+import { ABOUT_PAGE } from "@/data/about";
+import { CONTACT } from "@/data/contact";
+import { FEATURES, STATS } from "@/data/home";
+import { PAGE_SEO } from "@/data/seo";
+import { SITE } from "@/data/site";
 import { getManifest } from "@/utils/manifest";
 import { buildTelLink } from "@/utils/links";
 
 export const metadata: Metadata = {
-  title: "About Us",
-  description:
-    "SALAAR's HOME is a family-run furniture showroom in Canberra. Explore our story, our workshop values and why thousands of locals furnish with us.",
+  title: PAGE_SEO.about.title,
+  description: PAGE_SEO.about.description,
   alternates: { canonical: "/about" },
 };
 
@@ -25,12 +27,12 @@ export default function AboutPage() {
   return (
     <>
       <PageHero
-        eyebrow="Our Story"
-        title="Furnishing Homes With Care"
-        description="A family-run showroom where timeless design meets honest craftsmanship."
+        eyebrow={ABOUT_PAGE.hero.eyebrow}
+        title={ABOUT_PAGE.hero.title}
+        description={ABOUT_PAGE.hero.description}
         image={manifest.banners[0] ?? null}
       />
-      <Breadcrumb items={[{ label: "About" }]} />
+      <Breadcrumb items={[{ label: "Home", href: "/" }, { label: ABOUT_PAGE.hero.title }]} />
 
       {/* Story */}
       <section className="bg-linen py-16 sm:py-20 lg:py-24">
@@ -39,21 +41,16 @@ export default function AboutPage() {
             <div>
               <p className="eyebrow">
                 <span className="h-px w-8 bg-gold-deep" aria-hidden="true" />
-                Welcome to {SITE.name}
+                {ABOUT_PAGE.story.eyebrowPrefix} {SITE.name}
               </p>
-              <h2 className="title-lg">Built on craftsmanship, trust and a simple promise.</h2>
-              <p className="mt-6 leading-relaxed text-stone">
-                What began as a small family workshop has grown into one of the area&apos;s most loved
-                furniture destinations. We design and build every piece in our own workshop, so quality
-                is never a guess – it&apos;s a guarantee.
-              </p>
-              <p className="mt-4 leading-relaxed text-stone">
-                From bedroom sets to statement wardrobes, each item is made with solid, sustainable
-                materials and finished by hand. When you buy from us, you deal directly with the makers –
-                no middlemen, no inflated prices.
-              </p>
-              <Link href="/contact" className="btn-gold mt-8">
-                Get in Touch
+              <h2 className="title-lg">{ABOUT_PAGE.story.title}</h2>
+              {ABOUT_PAGE.story.paragraphs.map((paragraph, i) => (
+                <p key={i} className={`leading-relaxed text-stone ${i === 0 ? "mt-6" : "mt-4"}`}>
+                  {paragraph}
+                </p>
+              ))}
+              <Link href="/contact" prefetch className="btn-gold mt-8">
+                {ABOUT_PAGE.story.cta}
               </Link>
             </div>
           </Reveal>
@@ -67,7 +64,7 @@ export default function AboutPage() {
                 >
                   <SmartImage
                     src={image}
-                    alt={`Inside the ${SITE.name} showroom`}
+                    alt={`${ABOUT_PAGE.galleryAltPrefix} – ${i + 1}`}
                     fill
                     sizes="(min-width: 1024px) 25vw, 50vw"
                     loading="lazy"
@@ -87,28 +84,24 @@ export default function AboutPage() {
             <div className="card card-hover h-full p-8 sm:p-10">
               <p className="eyebrow">
                 <span className="h-px w-8 bg-gold-deep" aria-hidden="true" />
-                Why We Exist
+                {ABOUT_PAGE.mission.eyebrow}
               </p>
-              <h2 className="mt-4 font-display text-2xl font-semibold text-ink sm:text-3xl">Our Mission</h2>
-              <p className="mt-5 leading-relaxed text-stone">
-                To make beautiful, honest, solid-wood furniture accessible to every home. We believe
-                quality should never be a luxury reserved for a few – so we build in our own workshop,
-                sell directly, and keep prices fair without ever cutting corners.
-              </p>
+              <h2 className="mt-4 font-display text-2xl font-semibold text-ink sm:text-3xl">
+                {ABOUT_PAGE.mission.title}
+              </h2>
+              <p className="mt-5 leading-relaxed text-stone">{ABOUT_PAGE.mission.text}</p>
             </div>
           </Reveal>
           <Reveal delay={100} className="h-full">
             <div className="card card-hover h-full p-8 sm:p-10">
               <p className="eyebrow">
                 <span className="h-px w-8 bg-gold-deep" aria-hidden="true" />
-                Where We&apos;re Going
+                {ABOUT_PAGE.vision.eyebrow}
               </p>
-              <h2 className="mt-4 font-display text-2xl font-semibold text-ink sm:text-3xl">Our Vision</h2>
-              <p className="mt-5 leading-relaxed text-stone">
-                To become the most trusted furniture name in the region – the showroom families visit
-                first, for their first home and for every home after that. Every piece we make carries
-                our name, so every piece has to be right.
-              </p>
+              <h2 className="mt-4 font-display text-2xl font-semibold text-ink sm:text-3xl">
+                {ABOUT_PAGE.vision.title}
+              </h2>
+              <p className="mt-5 leading-relaxed text-stone">{ABOUT_PAGE.vision.text}</p>
             </div>
           </Reveal>
         </Container>
@@ -137,10 +130,10 @@ export default function AboutPage() {
             <div className="mx-auto max-w-2xl text-center">
               <p className="eyebrow justify-center">
                 <span className="h-px w-8 bg-gold-deep" aria-hidden="true" />
-                Why Choose Us
+                {ABOUT_PAGE.values.eyebrow}
                 <span className="h-px w-8 bg-gold-deep" aria-hidden="true" />
               </p>
-              <h2 className="title-lg">Furniture worth living with</h2>
+              <h2 className="title-lg">{ABOUT_PAGE.values.title}</h2>
             </div>
           </Reveal>
 
@@ -163,11 +156,13 @@ export default function AboutPage() {
                 <div>
                   <p className="eyebrow">
                     <span className="h-px w-8 bg-gold-deep" aria-hidden="true" />
-                    Visit the Showroom
+                    {ABOUT_PAGE.visit.eyebrow}
                   </p>
-                  <h2 className="mt-2 font-display text-2xl font-semibold sm:text-3xl">Come and feel the quality yourself</h2>
+                  <h2 className="mt-2 font-display text-2xl font-semibold sm:text-3xl">
+                    {ABOUT_PAGE.visit.title}
+                  </h2>
                   <p className="mt-4 max-w-xl text-sm leading-relaxed text-stone">
-                    {CONTACT.address} · {CONTACT.hours}. Prefer a chat first? Call{" "}
+                    {CONTACT.address} · {CONTACT.hours}. Prefer a chat first? {ABOUT_PAGE.visit.call}{" "}
                     <a href={buildTelLink()} className="font-semibold text-gold-deep underline-offset-2 hover:underline">
                       {CONTACT.phoneDisplay}
                     </a>{" "}
@@ -181,10 +176,10 @@ export default function AboutPage() {
                     rel="noopener noreferrer"
                     className="btn-gold"
                   >
-                    View on Google Maps
+                    {ABOUT_PAGE.visit.maps}
                   </a>
                   <a href={buildTelLink()} className="btn-outline-dark">
-                    Call {CONTACT.phoneDisplay}
+                    {ABOUT_PAGE.visit.call} {CONTACT.phoneDisplay}
                   </a>
                 </div>
               </div>

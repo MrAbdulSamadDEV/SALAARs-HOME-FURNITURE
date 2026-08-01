@@ -2,7 +2,7 @@ import Container from "@/components/ui/Container";
 import Reveal from "@/components/ui/Reveal";
 import Counter from "@/components/ui/Counter";
 import FeatureCard from "@/components/ui/FeatureCard";
-import { FEATURES, STATS } from "@/constants/content";
+import { FEATURES, STATS, WHY_CHOOSE_SECTION } from "@/data/home";
 
 /**
  * "Why Choose SALAAR's HOME" – feature grid on a beige background with an
@@ -16,13 +16,12 @@ export default function WhyChooseUs() {
           <div className="mx-auto max-w-2xl text-center">
             <p className="eyebrow justify-center">
               <span className="h-px w-8 bg-gold-deep" aria-hidden="true" />
-              The SALAAR&rsquo;s Difference
+              {WHY_CHOOSE_SECTION.eyebrow}
               <span className="h-px w-8 bg-gold-deep" aria-hidden="true" />
             </p>
-            <h2 className="title-lg">Why Choose SALAAR&rsquo;s HOME</h2>
+            <h2 className="title-lg">{WHY_CHOOSE_SECTION.title}</h2>
             <p className="mt-5 text-[15px] leading-relaxed text-stone sm:text-base">
-              Furniture is a long-term relationship. We build every piece as if it were going
-              into our own home – because that is exactly where it is headed.
+              {WHY_CHOOSE_SECTION.description}
             </p>
           </div>
         </Reveal>

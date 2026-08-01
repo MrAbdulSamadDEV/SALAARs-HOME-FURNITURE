@@ -1,0 +1,38 @@
+
+> salaars-home@1.0.0 predev
+> node scripts/sync-theme.mjs && node scripts/generate-images.mjs
+
+
+  Theme synced → styles/tokens.css
+  colors : 17 tokens
+  fonts  : Cormorant Garamond · Inter
+  shadows: 4 tokens
+
+
+  SALAAR'S HOME – image manifest generated
+  ────────────────────────────────────────────
+  logo            : not set (text logo used)
+  hero            : 3 image(s)
+  banners         : 3 image(s)
+  gallery         : 4 image(s)
+  bedroom-sets     : 68 item(s)
+  wardrobes        : 11 item(s)
+  side-tables      : 3 item(s)  (0 real, 3 placeholder)
+  dressers-mirrors : 18 item(s)
+  ────────────────────────────────────────────
+  → public/images-manifest.json ready
+
+  Tip: drop images into public/ folders and run `npm run images`.
+
+
+> salaars-home@1.0.0 dev
+> next dev
+
+ ⚠ Port 3000 is in use by process 7604, using available port 3001 instead.
+   ▲ Next.js 15.5.22
+   - Local:        http://localhost:3001
+   - Network:      http://192.168.100.238:3001
+
+ ✓ Starting...
+ ✓ Ready in 6.9s
+[?25h

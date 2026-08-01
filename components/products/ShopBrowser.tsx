@@ -4,7 +4,9 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import ProductGrid from "@/components/products/ProductGrid";
 import Container from "@/components/ui/Container";
-import { CATEGORIES } from "@/constants/categories";
+import { CATEGORIES } from "@/data/categories";
+import { matchesProductQuery } from "@/data/products";
+import { PRICE_RANGES, SHOP, SHOP_TAGS, SORT_OPTIONS } from "@/data/settings";
 import { CloseIcon, SearchIcon } from "@/components/icons";
 import type { ProductItem } from "@/types";
 
@@ -13,30 +15,7 @@ interface ShopBrowserProps {
   initialQuery?: string;
 }
 
-const PRICE_RANGES = [
-  { id: "any", label: "Any price", test: () => true },
-  { id: "lt10", label: "Under 10M", test: (p: number) => p < 10_000_000 },
-  { id: "10-30", label: "10M – 30M", test: (p: number) => p >= 10_000_000 && p < 30_000_000 },
-  { id: "30-60", label: "30M – 60M", test: (p: number) => p >= 30_000_000 && p < 60_000_000 },
-  { id: "gt60", label: "Above 60M", test: (p: number) => p >= 60_000_000 },
-];
-
-const SORT_OPTIONS = [
-  { id: "newest", label: "Newest" },
-  { id: "oldest", label: "Oldest" },
-  { id: "price-asc", label: "Price: Low to High" },
-  { id: "price-desc", label: "Price: High to Low" },
-  { id: "az", label: "Name: A – Z" },
-  { id: "za", label: "Name: Z – A" },
-];
-
-const TAG_OPTIONS = [
-  { id: "featured", label: "Featured" },
-  { id: "bestSelling", label: "Best Selling" },
-  { id: "isNew", label: "Latest" },
-] as const;
-
-type TagId = (typeof TAG_OPTIONS)[number]["id"];
+type TagId = (typeof SHOP_TAGS)[number]["id"];
 
 function Checkbox({
   label,
@@ -64,10 +43,17 @@ function SidebarTitle({ children }: { children: React.ReactNode }) {
   return <p className="mb-3 text-[11px] font-semibold tracking-[0.25em] text-ink uppercase">{children}</p>;
 }
 
+const PRICE_TESTS: Record<string, (price: number) => boolean> = {
+  lt10: (p) => p < 10_000_000,
+  "10-30": (p) => p >= 10_000_000 && p < 30_000_000,
+  "30-60": (p) => p >= 30_000_000 && p < 60_000_000,
+  gt60: (p) => p >= 60_000_000,
+};
+
 /**
  * Interactive shop browser – smart filter sidebar (category, price, delivery,
- * material, color, availability, tags), search and sorting.
- * Products are passed in from the server (no extra requests).
+ * material, color, availability, tags), instant search (name, category, price,
+ * delivery time, material) and sorting. Products come from src/data/products.ts.
  */
 export default function ShopBrowser({ products, initialQuery = "" }: ShopBrowserProps) {
   const [query, setQuery] = useState(initialQuery);
@@ -98,20 +84,16 @@ export default function ShopBrowser({ products, initialQuery = "" }: ShopBrowser
     setter(list.includes(value) ? list.filter((v) => v !== value) : [...list, value]);
 
   const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    const priceTest = PRICE_RANGES.find((r) => r.id === priceRange)?.test ?? (() => true);
+    const priceTest = PRICE_TESTS[priceRange];
 
     const list = products.filter((product) => {
-      const matchesQuery =
-        !q ||
-        product.name.toLowerCase().includes(q) ||
-        product.category.replace(/-/g, " ").includes(q);
-      if (!matchesQuery) return false;
+      if (!matchesProductQuery(product, query)) return false;
 
       if (activeCategory !== "all" && product.category !== activeCategory) return false;
 
-      if (product.price !== null && !priceTest(product.price)) return false;
-      if (product.price === null && priceRange !== "any") return false;
+      if (priceRange !== "any") {
+        if (product.price === null || !priceTest(product.price)) return false;
+      }
 
       if (deliveries.length > 0 && product.deliveryTime && !deliveries.includes(product.deliveryTime))
         return false;
@@ -164,19 +146,26 @@ export default function ShopBrowser({ products, initialQuery = "" }: ShopBrowser
     setTags([]);
   };
 
+  const radioPill = (selected: boolean) =>
+    `flex cursor-pointer items-center justify-between rounded-full border px-4 py-2 text-sm transition-all duration-300 ${
+      selected
+        ? "border-gold bg-gold/10 font-semibold text-gold-deep"
+        : "border-line bg-white text-stone hover:border-gold/60 hover:text-ink"
+    }`;
+
   const filterPanel = (
     <div className="space-y-7">
       {/* Search */}
       <div>
-        <SidebarTitle>Search Product</SidebarTitle>
+        <SidebarTitle>{SHOP.searchTitle}</SidebarTitle>
         <label className="relative block">
-          <span className="sr-only">Search products</span>
+          <span className="sr-only">{SHOP.searchPlaceholder}</span>
           <SearchIcon className="pointer-events-none absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-mist" />
           <input
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search products…"
+            placeholder={SHOP.searchPlaceholder}
             className="w-full rounded-full border border-line bg-cream py-2.5 pl-10 pr-4 text-sm text-ink placeholder:text-mist focus:border-gold focus:ring-2 focus:ring-gold/25 focus:outline-none"
           />
         </label>
@@ -184,17 +173,10 @@ export default function ShopBrowser({ products, initialQuery = "" }: ShopBrowser
 
       {/* Category */}
       <div>
-        <SidebarTitle>Category</SidebarTitle>
+        <SidebarTitle>{SHOP.categoryTitle}</SidebarTitle>
         <div className="space-y-2.5">
-          {[{ slug: "all", name: "All Categories" }, ...CATEGORIES].map((cat) => (
-            <label
-              key={cat.slug}
-              className={`flex cursor-pointer items-center justify-between rounded-full border px-4 py-2 text-sm transition-all duration-300 ${
-                activeCategory === cat.slug
-                  ? "border-gold bg-gold/10 font-semibold text-gold-deep"
-                  : "border-line bg-white text-stone hover:border-gold/60 hover:text-ink"
-              }`}
-            >
+          {[{ slug: "all", name: SHOP.allCategories }, ...CATEGORIES].map((cat) => (
+            <label key={cat.slug} className={radioPill(activeCategory === cat.slug)}>
               {cat.name}
               <input
                 type="radio"
@@ -210,17 +192,10 @@ export default function ShopBrowser({ products, initialQuery = "" }: ShopBrowser
 
       {/* Price range */}
       <div>
-        <SidebarTitle>Price Range</SidebarTitle>
+        <SidebarTitle>{SHOP.priceTitle}</SidebarTitle>
         <div className="space-y-2.5">
           {PRICE_RANGES.map((range) => (
-            <label
-              key={range.id}
-              className={`flex cursor-pointer items-center justify-between rounded-full border px-4 py-2 text-sm transition-all duration-300 ${
-                priceRange === range.id
-                  ? "border-gold bg-gold/10 font-semibold text-gold-deep"
-                  : "border-line bg-white text-stone hover:border-gold/60 hover:text-ink"
-              }`}
-            >
+            <label key={range.id} className={radioPill(priceRange === range.id)}>
               {range.label}
               <input
                 type="radio"
@@ -237,7 +212,7 @@ export default function ShopBrowser({ products, initialQuery = "" }: ShopBrowser
       {/* Delivery time */}
       {uniqueDeliveries.length > 0 && (
         <div>
-          <SidebarTitle>Delivery Time</SidebarTitle>
+          <SidebarTitle>{SHOP.deliveryTitle}</SidebarTitle>
           <div className="space-y-2.5">
             {uniqueDeliveries.map((d) => (
               <Checkbox
@@ -254,7 +229,7 @@ export default function ShopBrowser({ products, initialQuery = "" }: ShopBrowser
       {/* Material */}
       {uniqueMaterials.length > 0 && (
         <div>
-          <SidebarTitle>Material</SidebarTitle>
+          <SidebarTitle>{SHOP.materialTitle}</SidebarTitle>
           <div className="space-y-2.5">
             {uniqueMaterials.map((m) => (
               <Checkbox
@@ -271,7 +246,7 @@ export default function ShopBrowser({ products, initialQuery = "" }: ShopBrowser
       {/* Color */}
       {uniqueColors.length > 0 && (
         <div>
-          <SidebarTitle>Color</SidebarTitle>
+          <SidebarTitle>{SHOP.colorTitle}</SidebarTitle>
           <div className="space-y-2.5">
             {uniqueColors.map((c) => (
               <Checkbox
@@ -287,18 +262,11 @@ export default function ShopBrowser({ products, initialQuery = "" }: ShopBrowser
 
       {/* Availability */}
       <div>
-        <SidebarTitle>Availability</SidebarTitle>
+        <SidebarTitle>{SHOP.availabilityTitle}</SidebarTitle>
         <div className="space-y-2.5">
           {["all", "In Stock", "Made to Order"].map((a) => (
-            <label
-              key={a}
-              className={`flex cursor-pointer items-center justify-between rounded-full border px-4 py-2 text-sm transition-all duration-300 ${
-                availability === a
-                  ? "border-gold bg-gold/10 font-semibold text-gold-deep"
-                  : "border-line bg-white text-stone hover:border-gold/60 hover:text-ink"
-              }`}
-            >
-              {a === "all" ? "All" : a}
+            <label key={a} className={radioPill(availability === a)}>
+              {a === "all" ? SHOP.availabilityAll : a}
               <input
                 type="radio"
                 name="availability"
@@ -313,9 +281,9 @@ export default function ShopBrowser({ products, initialQuery = "" }: ShopBrowser
 
       {/* Featured / Best Selling / Latest */}
       <div>
-        <SidebarTitle>Collections</SidebarTitle>
+        <SidebarTitle>{SHOP.collectionsTitle}</SidebarTitle>
         <div className="space-y-2.5">
-          {TAG_OPTIONS.map((tag) => (
+          {SHOP_TAGS.map((tag) => (
             <Checkbox
               key={tag.id}
               label={tag.label}
@@ -335,11 +303,15 @@ export default function ShopBrowser({ products, initialQuery = "" }: ShopBrowser
           className="flex w-full items-center justify-center gap-2 rounded-full border border-ink/15 py-2.5 text-xs font-semibold tracking-[0.14em] text-ink uppercase transition-colors hover:border-gold hover:text-gold-deep"
         >
           <CloseIcon className="h-3.5 w-3.5" />
-          Clear All Filters
+          {SHOP.clearAll}
         </button>
       )}
     </div>
   );
+
+  const countLabel = `${filtered.length} ${
+    filtered.length === 1 ? SHOP.mobileCountSingular : SHOP.mobileCountPlural
+  }`;
 
   return (
     <section className="py-12 sm:py-16">
@@ -352,11 +324,9 @@ export default function ShopBrowser({ products, initialQuery = "" }: ShopBrowser
             className="btn-outline-dark !px-5 !py-2.5 !text-[11px]"
             aria-expanded={filtersOpen}
           >
-            {filtersOpen ? "Hide Filters" : "Show Filters"}
+            {filtersOpen ? SHOP.hideFilters : SHOP.showFilters}
           </button>
-          <p className="text-xs font-semibold tracking-[0.2em] text-stone uppercase">
-            {filtered.length} {filtered.length === 1 ? "product" : "products"}
-          </p>
+          <p className="text-xs font-semibold tracking-[0.2em] text-stone uppercase">{countLabel}</p>
         </div>
 
         <div className="flex flex-col gap-8 lg:flex-row lg:gap-10">
@@ -364,12 +334,12 @@ export default function ShopBrowser({ products, initialQuery = "" }: ShopBrowser
           <aside className={`${filtersOpen ? "block" : "hidden"} lg:block lg:w-[280px] lg:shrink-0`}>
             <div className="rounded-3xl bg-linen p-6 shadow-soft ring-1 ring-line sm:p-7 lg:sticky lg:top-24">
               <div className="mb-7 flex items-center justify-between">
-                <h2 className="font-display text-xl font-semibold">Filters</h2>
+                <h2 className="font-display text-xl font-semibold">{SHOP.filtersTitle}</h2>
                 <button
                   type="button"
                   onClick={() => setFiltersOpen(false)}
                   className="flex h-8 w-8 items-center justify-center rounded-full border border-line text-stone lg:hidden"
-                  aria-label="Close filters"
+                  aria-label={SHOP.closeFilters}
                 >
                   <CloseIcon className="h-4 w-4" />
                 </button>
@@ -383,10 +353,12 @@ export default function ShopBrowser({ products, initialQuery = "" }: ShopBrowser
             {/* Sort bar */}
             <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
               <p className="hidden text-xs font-semibold tracking-[0.25em] text-stone uppercase lg:block">
-                {filtered.length} {filtered.length === 1 ? "product" : "products"} found
+                {filtered.length === 1
+                  ? SHOP.productFound.replace("{count}", String(filtered.length))
+                  : SHOP.productsFound.replace("{count}", String(filtered.length))}
               </p>
               <label className="flex items-center gap-3 text-xs font-semibold tracking-[0.14em] text-ink uppercase">
-                Sort by
+                {SHOP.sortBy}
                 <select
                   value={sort}
                   onChange={(e) => setSort(e.target.value)}
@@ -406,13 +378,11 @@ export default function ShopBrowser({ products, initialQuery = "" }: ShopBrowser
             {/* Help card */}
             <div className="mt-12 flex flex-col items-center justify-between gap-4 rounded-3xl bg-beige px-8 py-8 text-center sm:flex-row sm:text-left">
               <div>
-                <h3 className="font-display text-xl font-semibold text-ink">Can&rsquo;t find what you need?</h3>
-                <p className="mt-1.5 text-sm text-stone">
-                  We build custom pieces to your exact size and finish.
-                </p>
+                <h3 className="font-display text-xl font-semibold text-ink">{SHOP.helpTitle}</h3>
+                <p className="mt-1.5 text-sm text-stone">{SHOP.helpText}</p>
               </div>
-              <Link href="/contact" className="btn-dark shrink-0 !px-6 !py-3 !text-[11px]">
-                Contact Us
+              <Link href="/contact" prefetch className="btn-dark shrink-0 !px-6 !py-3 !text-[11px]">
+                {SHOP.helpCta}
               </Link>
             </div>
           </div>

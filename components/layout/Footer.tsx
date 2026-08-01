@@ -1,15 +1,15 @@
 import Link from "next/link";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFacebookF, faTiktok, faWhatsapp } from "@fortawesome/free-brands-svg-icons";
 import Container from "@/components/ui/Container";
-import { CATEGORIES } from "@/constants/categories";
-import { CONTACT, NAV_LINKS, SITE } from "@/constants/site";
-import { buildTelLink } from "@/utils/links";
-import {
-  ClockIcon,
-  FacebookIcon,
-  MapPinIcon,
-  PhoneIcon,
-  TikTokIcon,
-} from "@/components/icons";
+import { getCategoryNavHref, NAV_CATEGORIES } from "@/data/category-navigation";
+import { CONTACT } from "@/data/contact";
+import { FOOTER } from "@/data/footer";
+import { NAV_LINKS } from "@/data/navigation";
+import { SITE } from "@/data/site";
+import { SOCIAL } from "@/data/social";
+import { buildTelLink, buildWhatsAppLink } from "@/utils/links";
+import { ClockIcon, MapPinIcon, PhoneIcon } from "@/components/icons";
 import BackToTop from "./BackToTop";
 
 /**
@@ -18,6 +18,13 @@ import BackToTop from "./BackToTop";
  */
 export default function Footer() {
   const year = new Date().getFullYear();
+
+  /* Social icons – same size, equal spacing, open in a new tab */
+  const socialLinks = [
+    { icon: faFacebookF, label: "Facebook", href: SOCIAL.facebook.url },
+    { icon: faTiktok, label: "TikTok", href: SOCIAL.tiktok.url },
+    { icon: faWhatsapp, label: SOCIAL.whatsapp.label, href: buildWhatsAppLink() },
+  ];
 
   return (
     <footer className="bg-beige text-ink">
@@ -32,43 +39,36 @@ export default function Footer() {
             <span className="leading-none">
               <span className="block font-display text-lg font-bold tracking-[0.04em]">{SITE.name}</span>
               <span className="mt-1 block text-[9px] font-semibold tracking-[0.32em] text-gold-deep uppercase">
-                Premium Furniture
+                {SITE.taglineShort}
               </span>
             </span>
           </div>
-          <p className="mt-6 max-w-xs text-sm leading-relaxed text-stone">
-            Handcrafted solid-wood furniture for every room of your home – bedroom sets,
-            wardrobes and more, built to be loved for generations.
-          </p>
-          <div className="mt-7 flex items-center gap-3">
-            <a
-              href={CONTACT.facebook}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Facebook"
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-ink/15 text-ink transition-all duration-300 hover:-translate-y-0.5 hover:border-gold hover:bg-gold hover:text-white"
-            >
-              <FacebookIcon className="h-4 w-4" />
-            </a>
-            <a
-              href={CONTACT.tiktok}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="TikTok"
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-ink/15 text-ink transition-all duration-300 hover:-translate-y-0.5 hover:border-gold hover:bg-gold hover:text-white"
-            >
-              <TikTokIcon className="h-4 w-4" />
-            </a>
+          <p className="mt-6 max-w-xs text-sm leading-relaxed text-stone">{FOOTER.brand.blurb}</p>
+          <div className="mt-7 flex items-center justify-start gap-3">
+            {socialLinks.map(({ icon, label, href }) => (
+              <a
+                key={label}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={label}
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-ink/15 text-ink transition-all duration-300 hover:-translate-y-0.5 hover:border-gold hover:bg-gold hover:text-white"
+              >
+                <FontAwesomeIcon icon={icon} className="h-4 w-4" />
+              </a>
+            ))}
           </div>
         </div>
 
         {/* Quick links */}
         <nav aria-label="Footer – quick links">
-          <h3 className="mb-6 text-[11px] font-semibold tracking-[0.3em] text-gold-deep uppercase">Quick Links</h3>
+          <h3 className="mb-6 text-[11px] font-semibold tracking-[0.3em] text-gold-deep uppercase">
+            {FOOTER.columns.quickLinks}
+          </h3>
           <ul className="space-y-3.5 text-sm">
             {NAV_LINKS.map((link) => (
               <li key={link.href}>
-                <Link href={link.href} className="link-underline text-stone hover:text-ink">
+                <Link href={link.href} prefetch className="link-underline text-stone hover:text-ink">
                   {link.label}
                 </Link>
               </li>
@@ -78,12 +78,18 @@ export default function Footer() {
 
         {/* Categories */}
         <nav aria-label="Footer – categories">
-          <h3 className="mb-6 text-[11px] font-semibold tracking-[0.3em] text-gold-deep uppercase">Categories</h3>
+          <h3 className="mb-6 text-[11px] font-semibold tracking-[0.3em] text-gold-deep uppercase">
+            {FOOTER.columns.categories}
+          </h3>
           <ul className="space-y-3.5 text-sm">
-            {CATEGORIES.map((cat) => (
+            {NAV_CATEGORIES.map((cat) => (
               <li key={cat.slug}>
-                <Link href={`/${cat.slug}`} className="link-underline text-stone hover:text-ink">
-                  {cat.name}
+                <Link
+                  href={getCategoryNavHref(cat.slug)}
+                  prefetch
+                  className="link-underline text-stone hover:text-ink"
+                >
+                  {cat.label}
                 </Link>
               </li>
             ))}
@@ -92,7 +98,9 @@ export default function Footer() {
 
         {/* Contact */}
         <div>
-          <h3 className="mb-6 text-[11px] font-semibold tracking-[0.3em] text-gold-deep uppercase">Contact</h3>
+          <h3 className="mb-6 text-[11px] font-semibold tracking-[0.3em] text-gold-deep uppercase">
+            {FOOTER.columns.contact}
+          </h3>
           <ul className="space-y-4 text-sm text-stone">
             <li className="flex items-start gap-3">
               <PhoneIcon className="mt-0.5 h-4 w-4 shrink-0 text-gold-deep" />
@@ -115,11 +123,12 @@ export default function Footer() {
       <div className="border-t border-ink/10">
         <Container className="flex flex-col items-center justify-between gap-4 py-6 text-xs tracking-wider text-stone sm:flex-row">
           <p>
-            © {year} {SITE.name}. All rights reserved.
+            © {year} {SITE.name}. {FOOTER.bottom.rights}
           </p>
           <p className="tracking-[0.2em] uppercase">
-            Handcrafted <span className="text-gold-deep">·</span> Solid Wood{" "}
-            <span className="text-gold-deep">·</span> Timeless Design
+            {FOOTER.bottom.tagline} <span className="text-gold-deep">{FOOTER.bottom.taglineSeparator}</span>{" "}
+            {FOOTER.bottom.taglineMiddle} <span className="text-gold-deep">{FOOTER.bottom.taglineSeparator}</span>{" "}
+            {FOOTER.bottom.taglineEnd}
           </p>
           <BackToTop />
         </Container>

@@ -25,6 +25,8 @@ export interface ProductItem {
   price: number | null;
   /** Public image path, e.g. "/products/bedroom-sets/1.jpg" */
   image: string;
+  /** Optional additional gallery images for this product */
+  gallery?: string[];
   /** Optional per-product overrides (from info.json) */
   description?: string;
   material?: string;
@@ -65,12 +67,156 @@ export interface CategoryInfo {
   seoDescription: string;
 }
 
+/** Category type used in data files */
+export interface Category {
+  slug: string;
+  name: string;
+  tagline: string;
+  short: string;
+  description: string;
+  material: string;
+  dimensions: string;
+  deliveryTime: string;
+  colors: string[];
+  seoTitle: string;
+  seoDescription: string;
+}
+
+/** Site configuration type */
+export interface SiteConfig {
+  name: string;
+  tagline: string;
+  url: string;
+  description: string;
+  keywords: string[];
+}
+
+/** Contact information type */
+export interface ContactInfo {
+  phone: string;
+  phoneDisplay: string;
+  phoneIntl: string;
+  facebook: string;
+  facebookLabel: string;
+  tiktok: string;
+  tiktokLabel: string;
+  email: string | null;
+  address: string;
+  hours: string;
+  mapEmbed: string;
+}
+
+/** Feature type used in content */
+export interface Feature {
+  icon: string;
+  title: string;
+  text: string;
+}
+
+/** Stat type used in content */
+export interface Stat {
+  value: number;
+  suffix: string;
+  label: string;
+}
+
+/** Product perk type used in content */
+export interface ProductPerk {
+  perk: string;
+}
+
+/** FAQ item type used in data files */
 export interface FAQItem {
   question: string;
   answer: string;
 }
 
+/** FAQ group type used in data files */
 export interface FAQGroup {
   title: string;
   items: FAQItem[];
+}
+
+/** Theme configuration type */
+export interface ThemeConfig {
+  colors: {
+    background: string;
+    primary: string;
+    secondary: string;
+    accent: string;
+    text: string;
+    border: string;
+  };
+  fonts: {
+    headings: string;
+    body: string;
+    buttons: string;
+  };
+  shadows: {
+    soft: string;
+    cardHover: string;
+  };
+  animations: {
+    duration: {
+      fast: string;
+      normal: string;
+      slow: string;
+    };
+    easing: {
+      default: string;
+      smooth: string;
+    };
+  };
+}
+
+/** Social links type */
+export interface SocialLinks {
+  facebook: string;
+  facebookLabel: string;
+  tiktok: string;
+  tiktokLabel: string;
+}
+
+/** WhatsApp config type */
+export interface WhatsAppConfig {
+  phone: string;
+  message: string;
+  label: string;
+}
+
+/** Search config type */
+export interface SearchConfig {
+  minQueryLength: number;
+  maxResults: number;
+  fields: string[];
+}
+
+/** Footer links type */
+export interface FooterLinks {
+  about: { href: string; label: string }[];
+  shop: { href: string; label: string }[];
+  help: { href: string; label: string }[];
+  legal: { href: string; label: string }[];
+}
+
+/** Navigation item type */
+export interface NavigationItem {
+  href: string;
+  label: string;
+}
+
+/** SEO configuration type */
+export interface SEOConfig {
+  defaultTitle: string;
+  titleSeparator: string;
+  description: string;
+  keywords: string[];
+  openGraph: {
+    type: string;
+    siteName: string;
+  };
+  twitter: {
+    card: string;
+    site: string;
+  };
 }

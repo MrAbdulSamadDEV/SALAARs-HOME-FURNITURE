@@ -1,15 +1,20 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Playfair_Display } from "next/font/google";
+import { Cormorant_Garamond, Inter } from "next/font/google";
 import Header from "@/components/layout/Header";
+import CategoryNavigation from "@/components/navigation/CategoryNavigation";
 import Footer from "@/components/layout/Footer";
-import { SITE } from "@/constants/site";
+import WhatsAppFloat from "@/components/layout/WhatsAppFloat";
+import { SITE } from "@/data/site";
+import { THEME } from "@/data/theme";
 import { getManifest } from "@/utils/manifest";
 import "@/styles/globals.css";
 
-/* Premium typography – loaded with next/font for zero layout shift */
-const playfair = Playfair_Display({
+/* Premium typography – loaded with next/font for zero layout shift.
+   Headings use Cormorant Garamond, body and buttons use Inter. */
+const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
-  variable: "--font-playfair",
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-cormorant",
   display: "swap",
 });
 
@@ -46,7 +51,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#f8f6f2",
+  themeColor: THEME.colors.background,
   width: "device-width",
   initialScale: 1,
 };
@@ -58,11 +63,13 @@ export default function RootLayout({
   const logoUrl = getManifest().logo;
 
   return (
-    <html lang="en" className={`${playfair.variable} ${inter.variable}`}>
+    <html lang="en" className={`${cormorant.variable} ${inter.variable}`}>
       <body>
         <Header logoUrl={logoUrl} />
+        <CategoryNavigation />
         <main>{children}</main>
         <Footer />
+        <WhatsAppFloat />
       </body>
     </html>
   );

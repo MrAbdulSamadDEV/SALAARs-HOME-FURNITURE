@@ -5,17 +5,19 @@ import Link from "next/link";
 import Reveal from "@/components/ui/Reveal";
 import ProductCard from "@/components/products/ProductCard";
 import Container from "@/components/ui/Container";
-import { CATEGORIES } from "@/constants/categories";
-import type { ImageManifest } from "@/types";
+import { CATEGORIES } from "@/data/categories";
+import { BEST_SELLING_SECTION } from "@/data/home";
+import { getAllProducts } from "@/data/products";
+import type { ProductItem } from "@/types";
 
 /**
- * "Best Selling Products" – tabbed product browser fed by the image manifest.
+ * "Best Selling Products" – tabbed product browser fed by src/data/products.ts.
  * Products tagged `bestSelling` are prioritized.
  */
-export default function BestSellingProducts({ manifest }: { manifest: ImageManifest }) {
+export default function BestSellingProducts() {
   const [tab, setTab] = useState("all");
 
-  const allProducts = useMemo(() => Object.values(manifest.products).flat(), [manifest]);
+  const allProducts: ProductItem[] = useMemo(() => getAllProducts(), []);
 
   const products = useMemo(() => {
     const list = tab === "all" ? allProducts : allProducts.filter((p) => p.category === tab);
@@ -24,7 +26,7 @@ export default function BestSellingProducts({ manifest }: { manifest: ImageManif
       .slice(0, 8);
   }, [allProducts, tab]);
 
-  const tabs = [{ slug: "all", name: "All" }, ...CATEGORIES];
+  const tabs = [{ slug: "all", name: BEST_SELLING_SECTION.allTab }, ...CATEGORIES];
 
   return (
     <section className="bg-linen py-16 sm:py-20 lg:py-24">
@@ -34,12 +36,12 @@ export default function BestSellingProducts({ manifest }: { manifest: ImageManif
             <div>
               <p className="eyebrow">
                 <span className="h-px w-8 bg-gold-deep" aria-hidden="true" />
-                Customer Favorites
+                {BEST_SELLING_SECTION.eyebrow}
               </p>
-              <h2 className="title-lg">Best Selling Products</h2>
+              <h2 className="title-lg">{BEST_SELLING_SECTION.title}</h2>
             </div>
-            <Link href="/shop" className="btn-outline-dark shrink-0">
-              View All Products
+            <Link href="/shop" prefetch className="btn-outline-dark shrink-0">
+              {BEST_SELLING_SECTION.viewAll}
             </Link>
           </div>
         </Reveal>

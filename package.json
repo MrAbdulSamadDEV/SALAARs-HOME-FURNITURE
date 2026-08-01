@@ -5,17 +5,21 @@
   "description": "SALAAR's HOME – Premium furniture showroom website (Next.js 15, TypeScript, Tailwind CSS)",
   "scripts": {
     "images": "node scripts/generate-images.mjs",
-    "predev": "node scripts/generate-images.mjs",
+    "sync:theme": "node scripts/sync-theme.mjs",
+    "predev": "node scripts/sync-theme.mjs && node scripts/generate-images.mjs",
     "dev": "next dev",
-    "prebuild": "node scripts/generate-images.mjs",
+    "prebuild": "node scripts/sync-theme.mjs && node scripts/generate-images.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint ."
   },
   "dependencies": {
+    "@fortawesome/free-brands-svg-icons": "^7.3.1",
+    "@fortawesome/react-fontawesome": "^3.5.0",
     "next": "^15.5.4",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "react-photo-view": "^1.2.7"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
