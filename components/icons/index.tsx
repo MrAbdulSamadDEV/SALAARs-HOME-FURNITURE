@@ -102,14 +102,6 @@ export function CheckIcon(props: P) {
   );
 }
 
-export function HeartIcon(props: P) {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" {...base} {...props}>
-      <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
-    </svg>
-  );
-}
-
 export function ChevronLeftIcon(props: P) {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" {...base} {...props}>
@@ -201,17 +193,6 @@ export function MaximizeIcon(props: P) {
       <path d="M21 8V5a2 2 0 0 0-2-2h-3" />
       <path d="M3 16v3a2 2 0 0 0 2 2h3" />
       <path d="M16 21h3a2 2 0 0 0 2-2v-3" />
-    </svg>
-  );
-}
-
-export function ZoomInIcon(props: P) {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" {...base} {...props}>
-      <circle cx="11" cy="11" r="8" />
-      <path d="m21 21-4.35-4.35" />
-      <path d="M11 8v6" />
-      <path d="M8 11h6" />
     </svg>
   );
 }

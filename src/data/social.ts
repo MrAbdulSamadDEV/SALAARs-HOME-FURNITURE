@@ -19,7 +19,7 @@ export const SOCIAL = {
    */
   whatsapp: {
     enabled: true,
-    phone: "84370804453",
+    phone: "92370804453",
     message: "Hello SALAAR's HOME! I'm interested in your furniture.",
     label: "Chat with us on WhatsApp",
   },

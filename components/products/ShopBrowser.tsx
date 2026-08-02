@@ -44,10 +44,10 @@ function SidebarTitle({ children }: { children: React.ReactNode }) {
 }
 
 const PRICE_TESTS: Record<string, (price: number) => boolean> = {
-  lt10: (p) => p < 10_000_000,
-  "10-30": (p) => p >= 10_000_000 && p < 30_000_000,
-  "30-60": (p) => p >= 30_000_000 && p < 60_000_000,
-  gt60: (p) => p >= 60_000_000,
+  lt10: (p) => p < 50_000,
+  "10-30": (p) => p >= 50_000 && p < 150_000,
+  "30-60": (p) => p >= 150_000 && p < 300_000,
+  gt60: (p) => p >= 300_000,
 };
 
 /**

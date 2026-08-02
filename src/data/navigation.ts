@@ -12,13 +12,9 @@ export const NAV_LINKS = [
   { href: "/faq", label: "FAQ" },
 ];
 
-/** Links shown in the header desktop nav (subset, Collections is a dropdown). */
-export const PRIMARY_LINKS = NAV_LINKS.filter((link) =>
-  ["/", "/about", "/shop", "/contact", "/faq"].includes(link.href)
-);
-
 /** Labels used by the header UI. */
 export const NAV_LABELS = {
+  menu: "Menu",
   collections: "Collections",
   viewAllProducts: "View All Products",
   viewAll: "View All Products →",

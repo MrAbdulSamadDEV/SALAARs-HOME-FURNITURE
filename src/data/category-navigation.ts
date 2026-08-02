@@ -156,3 +156,12 @@ export function getCategoryNavHref(slug: string): string {
 export function getCategoryNavItem(slug: string): CategoryNavItem | undefined {
   return NAV_CATEGORIES.find((c) => c.slug === slug);
 }
+
+/**
+ * Categories shown in the header category bar, the mobile menu and the
+ * search overlay – the six core collections. The footer still lists all
+ * NAV_CATEGORIES.
+ */
+export const HEADER_CATEGORIES: CategoryNavItem[] = NAV_CATEGORIES.filter((cat) =>
+  ["bed-sets", "beds", "wardrobes", "side-tables", "dressers", "mirrors"].includes(cat.slug)
+);

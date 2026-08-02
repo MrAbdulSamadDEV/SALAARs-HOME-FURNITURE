@@ -25,10 +25,10 @@ export default function FeatureCard({ feature }: { feature: Feature }) {
   return (
     <div className="card card-hover group relative h-full overflow-hidden p-8">
       <span
-        className="absolute top-0 left-0 h-0.5 w-0 bg-gold transition-all duration-500 group-hover:w-full"
+        className="absolute top-0 left-0 h-0.5 w-0 bg-gold transition-all duration-300 group-hover:w-full"
         aria-hidden="true"
       />
-      <span className="flex h-13 w-13 items-center justify-center rounded-2xl bg-gold-pale text-gold-deep transition-all duration-300 group-hover:bg-gold group-hover:text-ink group-hover:shadow-gold">
+      <span className="flex h-13 w-13 items-center justify-center rounded-2xl bg-gold-pale text-gold-deep transition-all duration-200 group-hover:bg-gold group-hover:text-ink group-hover:shadow-gold">
         <Icon className="h-6 w-6" />
       </span>
       <h3 className="title-md mt-6 text-ink">{feature.title}</h3>

@@ -8,9 +8,9 @@
 
 export const CURRENCY = {
   /** ISO currency code used for price formatting. */
-  code: "VND",
+  code: "PKR",
   /** Locale used for number formatting. */
-  locale: "vi-VN",
+  locale: "en-PK",
 };
 
 /* ------------------------------- search -------------------------------- */
@@ -114,10 +114,10 @@ export const SHOP = {
 /** Price range filters shown in the shop sidebar. */
 export const PRICE_RANGES = [
   { id: "any", label: "Any price" },
-  { id: "lt10", label: "Under 10M" },
-  { id: "10-30", label: "10M – 30M" },
-  { id: "30-60", label: "30M – 60M" },
-  { id: "gt60", label: "Above 60M" },
+  { id: "lt10", label: "Under 50K" },
+  { id: "10-30", label: "50K – 150K" },
+  { id: "30-60", label: "150K – 300K" },
+  { id: "gt60", label: "Above 300K" },
 ] as const;
 
 /** Sorting options shown in the shop. */

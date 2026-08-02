@@ -42,6 +42,9 @@ export default function SmartImage({
       {...props}
       src={current}
       alt={alt}
+      draggable={false}
+      onContextMenu={(e) => e.preventDefault()}
+      onDragStart={(e) => e.preventDefault()}
       onError={() => {
         const next = attempt + 1;
         if (next < chain.length) {

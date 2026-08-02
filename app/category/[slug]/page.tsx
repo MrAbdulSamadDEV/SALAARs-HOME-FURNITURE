@@ -5,6 +5,7 @@ import PageHero from "@/components/ui/PageHero";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import Container from "@/components/ui/Container";
 import Reveal from "@/components/ui/Reveal";
+import JsonLd from "@/components/seo/JsonLd";
 import ProductGrid from "@/components/products/ProductGrid";
 import {
   getCategoryNavHref,
@@ -12,6 +13,7 @@ import {
   NAV_CATEGORIES,
 } from "@/data/category-navigation";
 import { BREADCRUMB_HOME, NOT_FOUND, SHOP } from "@/data/settings";
+import { SITE } from "@/data/site";
 import { getCategoryProducts } from "@/data/products";
 import { getManifest } from "@/utils/manifest";
 
@@ -43,6 +45,18 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
 
   const products = item.source ? getCategoryProducts(item.source) : [];
   const manifest = getManifest();
+  const categoryUrl = `${SITE.url}${getCategoryNavHref(item.slug)}`;
+
+  /* Structured data for search engines – BreadcrumbList. */
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: BREADCRUMB_HOME, item: SITE.url },
+      { "@type": "ListItem", position: 2, name: "Shop", item: `${SITE.url}/shop` },
+      { "@type": "ListItem", position: 3, name: item.label, item: categoryUrl },
+    ],
+  };
 
   return (
     <>
@@ -110,6 +124,8 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
           )}
         </Container>
       </section>
+
+      <JsonLd data={breadcrumbJsonLd} />
     </>
   );
 }

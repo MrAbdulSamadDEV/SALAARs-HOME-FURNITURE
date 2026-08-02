@@ -47,7 +47,7 @@ export default function BestSellingProducts() {
         </Reveal>
 
         {/* Tabs */}
-        <Reveal delay={100}>
+        <Reveal>
           <div className="no-scrollbar mt-10 flex gap-2.5 overflow-x-auto" role="tablist" aria-label="Product categories">
             {tabs.map((tabItem) => (
               <button
@@ -69,9 +69,9 @@ export default function BestSellingProducts() {
         </Reveal>
 
         {/* Grid */}
-        <div className="mt-12 grid grid-cols-1 items-stretch gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
-          {products.map((product, i) => (
-            <Reveal key={product.id} delay={Math.min(i, 3) * 80}>
+        <div className="mt-12 grid grid-cols-2 items-stretch gap-3 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
+          {products.map((product) => (
+            <Reveal key={product.id}>
               <ProductCard product={product} />
             </Reveal>
           ))}

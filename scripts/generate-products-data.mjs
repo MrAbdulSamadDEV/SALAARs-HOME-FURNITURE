@@ -35,7 +35,7 @@ lines.push(`/**
  *
  * EDITABLE FIELDS (per product)
  * -----------------------------
- *   name, price (VND or null), image (path in /public), gallery (extra photos),
+ *   name, price (PKR or null), image (path in /public), gallery (extra photos),
  *   description, material, dimensions, color, deliveryTime, availability,
  *   tags { featured, bestSelling, isNew }, order (sorting position).
  *

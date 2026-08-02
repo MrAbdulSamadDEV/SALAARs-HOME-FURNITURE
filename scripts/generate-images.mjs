@@ -26,8 +26,8 @@
  * inside a product folder, e.g. public/products/bedroom-sets/info.json:
  *
  *   [
- *     { "file": "1.jpg", "name": "Royal King Bed", "price": 24500000 },
- *     { "file": "2.jpg", "name": "Classic Queen Bed", "price": 18900000, "material": "Solid Oak", "dimensions": "160 x 200 cm" }
+ *     { "file": "1.jpg", "name": "Royal King Bed", "price": 245000 },
+ *     { "file": "2.jpg", "name": "Classic Queen Bed", "price": 189000, "material": "Solid Oak", "dimensions": "160 x 200 cm" }
  *   ]
  *
  * "file" is matched against the image file name (with or without extension).

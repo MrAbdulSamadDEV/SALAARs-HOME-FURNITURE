@@ -1,6 +1,12 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { SITE } from "@/data/site";
 import { NOT_FOUND } from "@/data/settings";
+import { PAGE_SEO } from "@/data/seo";
+
+export const metadata: Metadata = {
+  title: PAGE_SEO.notFound.title,
+};
 
 /** Premium 404 page. */
 export default function NotFound() {

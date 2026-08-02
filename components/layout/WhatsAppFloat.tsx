@@ -21,13 +21,12 @@ export default function WhatsAppFloat() {
       className="group fixed right-5 bottom-5 z-[60] flex items-center gap-3 sm:right-7 sm:bottom-7"
     >
       {/* Tooltip */}
-      <span className="pointer-events-none hidden translate-x-2 rounded-full bg-ink px-4 py-2 text-xs font-semibold tracking-wide text-white opacity-0 shadow-card transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100 sm:block">
+      <span className="pointer-events-none hidden translate-x-2 rounded-full bg-ink px-4 py-2 text-xs font-semibold tracking-wide text-white opacity-0 shadow-card transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100 sm:block">
         {label}
       </span>
 
-      {/* Button with pulse ring */}
-      <span className="relative flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-card transition-transform duration-300 will-change-transform hover:scale-110 sm:h-16 sm:w-16">
-        <span className="absolute inset-0 rounded-full bg-[#25D366] will-change-transform [animation:pulse-ring_2.4s_cubic-bezier(0.4,0,0.6,1)_infinite]" aria-hidden="true" />
+      {/* Button */}
+      <span className="relative flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-card transition-transform duration-200 will-change-transform hover:scale-105 sm:h-16 sm:w-16">
         <WhatsAppIcon className="relative h-7 w-7 sm:h-8 sm:w-8" />
       </span>
     </a>

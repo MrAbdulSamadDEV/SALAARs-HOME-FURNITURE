@@ -5,82 +5,8 @@
  * SALAAR's HOME – design system v4
  * Premium furniture showroom
  * Palette & fonts come from src/data/theme.ts → styles/tokens.css (auto-generated).
- * This file only holds animations, base styles and reusable component classes.
+ * This file only holds base styles and reusable component classes.
  */
-
-:root {
-  /* ---------------------------- animations ---------------------------- */
-  --animate-fade-up: fade-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
-  --animate-fade-in: fade-in 1s ease-out both;
-  --animate-page-in: page-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
-  --animate-hero-in: hero-in 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
-  --animate-zoom-slow: zoom-slow 18s ease-in-out infinite alternate;
-  --animate-pulse-ring: pulse-ring 2.4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-@keyframes fade-up {
-  from {
-    opacity: 0;
-    transform: translateY(24px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes page-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes hero-in {
-  from {
-    opacity: 0;
-    transform: translateY(28px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes zoom-slow {
-  from {
-    transform: scale(1);
-  }
-  to {
-    transform: scale(1.08);
-  }
-}
-
-  @keyframes pulse-ring {
-    0% {
-      transform: scale(1);
-      opacity: 0.45;
-    }
-    70% {
-      transform: scale(1.55);
-      opacity: 0;
-    }
-    100% {
-      transform: scale(1.55);
-      opacity: 0;
-    }
-  }
 
 /* ------------------------------- base -------------------------------- */
 
@@ -109,6 +35,20 @@ body {
   outline-offset: 2px;
 }
 
+/* --------------------------- image protection ---------------------------
+ * Makes downloading images deliberately harder:
+ * – disables drag on desktop
+ * – disables right-click save via JS (ImageProtection component)
+ * – disables long-press save / callout on iOS and touch devices
+ */
+img {
+  -webkit-user-drag: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -moz-user-select: none;
+}
+
 /* Refined scrollbar */
 ::-webkit-scrollbar {
   width: 10px;
@@ -130,25 +70,6 @@ body {
 
 /* ---------------------------- reusable bits ---------------------------- */
 
-.animate-fade-up {
-  animation: var(--animate-fade-up);
-}
-.animate-fade-in {
-  animation: var(--animate-fade-in);
-}
-.animate-page-in {
-  animation: var(--animate-page-in);
-}
-.animate-hero-in {
-  animation: var(--animate-hero-in);
-}
-.animate-zoom-slow {
-  animation: var(--animate-zoom-slow);
-}
-.animate-pulse-ring {
-  animation: var(--animate-pulse-ring);
-}
-
 /* Buttons – premium pills (Inter SemiBold) */
 .btn-gold,
 .btn-dark,
@@ -165,13 +86,12 @@ body {
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease,
+    box-shadow 0.2s ease, border-color 0.2s ease;
   user-select: none;
 }
 
 .btn-gold {
-  position: relative;
-  overflow: hidden;
   background-color: var(--color-gold, #dcbf72);
   color: var(--color-ink, #111827);
 }
@@ -183,21 +103,8 @@ body {
 .btn-gold:active {
   transform: translateY(0);
 }
-.btn-gold::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(105deg, transparent 40%, rgb(255 255 255 / 0.4) 50%, transparent 60%);
-  transform: translateX(-130%);
-  transition: transform 0.65s ease;
-}
-.btn-gold:hover::after {
-  transform: translateX(130%);
-}
 
 .btn-dark {
-  position: relative;
-  overflow: hidden;
   background-color: var(--color-ink, #111827);
   color: #fff;
 }
@@ -235,6 +142,40 @@ body {
 }
 .btn-outline-dark:active {
   transform: translateY(0);
+}
+
+/* Product card action button – compact, flat, no lift/scale animations */
+.btn-card {
+  display: inline-flex;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  padding: 0.5rem 0.875rem;
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  background-color: var(--color-ink, #111827);
+  color: #fff;
+  transition: background-color 0.18s ease, color 0.18s ease;
+  user-select: none;
+}
+.btn-card:hover {
+  background-color: var(--color-gold, #dcbf72);
+  color: var(--color-ink, #111827);
+}
+.btn-card:active {
+  background-color: var(--color-gold-soft, #e6d4a3);
+}
+@media (min-width: 640px) {
+  .btn-card {
+    padding: 0.5rem 1rem;
+    font-size: 0.6875rem;
+    letter-spacing: 0.14em;
+  }
 }
 
 /* Gold eyebrow above section titles */
@@ -286,8 +227,7 @@ body {
   background-color: var(--color-linen, #f8f3eb);
   box-shadow: var(--shadow-soft, 0 12px 30px rgb(17 24 39 / 0.08));
   border: 1px solid var(--color-line, #e8e1d5);
-  transition: all 0.5s ease;
-  will-change: transform;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 }
 .card-hover:hover {
   transform: translateY(-0.375rem);

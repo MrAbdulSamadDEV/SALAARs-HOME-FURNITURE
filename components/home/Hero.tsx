@@ -15,7 +15,7 @@ type Orientation = "landscape" | "portrait";
  *   landscape (incl. wide banners) → object-cover, portrait (3:4, 4:5) → object-contain,
  *   so no faces or furniture are ever cropped and the whole image stays visible.
  * – Reduced height on mobile (16/10) → taller on tablet and desktop (2:1).
- * – Smooth fade between slides, autoplay (paused on hover), swipe on touch
+ * – Smooth 400ms fade between slides, autoplay (paused on hover), swipe on touch
  *   devices, arrow buttons on desktop only, pagination dots everywhere.
  */
 export default function Hero({ initialSlides }: { initialSlides: string[] }) {
@@ -69,7 +69,7 @@ export default function Hero({ initialSlides }: { initialSlides: string[] }) {
             return (
               <div
                 key={slide}
-                className={`absolute inset-0 transition-opacity duration-1000 ease-out ${
+                className={`absolute inset-0 transition-opacity duration-[400ms] ease-out ${
                   i === index ? "opacity-100" : "opacity-0"
                 }`}
                 aria-hidden={i !== index}
@@ -89,9 +89,7 @@ export default function Hero({ initialSlides }: { initialSlides: string[] }) {
                         img.naturalWidth >= img.naturalHeight ? "landscape" : "portrait",
                     }));
                   }}
-                  className={`h-full w-full ${fit} ${
-                    i === index && fit === "object-cover" ? "animate-zoom-slow" : ""
-                  }`}
+                  className={`h-full w-full ${fit}`}
                 />
               </div>
             );
@@ -107,23 +105,23 @@ export default function Hero({ initialSlides }: { initialSlides: string[] }) {
             aria-hidden="true"
           />
 
-          {/* Content – keyed to re-animate on every slide change */}
+          {/* Content */}
           <div className="relative mx-auto w-full max-w-[1400px] px-5 py-10 sm:px-8 sm:py-16 lg:px-12 lg:py-20">
-            <div key={index} className="max-w-2xl">
-              <p className="animate-hero-in inline-flex items-center gap-2.5 rounded-full border border-gold/40 bg-ink/30 px-4 py-2 text-[11px] font-semibold tracking-[0.28em] text-gold uppercase backdrop-blur-sm">
+            <div className="max-w-2xl">
+              <p className="inline-flex items-center gap-2.5 rounded-full border border-gold/40 bg-ink/30 px-4 py-2 text-[11px] font-semibold tracking-[0.28em] text-gold uppercase backdrop-blur-sm">
                 <span className="h-1.5 w-1.5 rounded-full bg-gold" aria-hidden="true" />
                 {copy.eyebrow}
               </p>
 
-              <h1 className="mt-5 animate-hero-in font-display text-[1.9rem] leading-[1.12] font-semibold text-white text-balance sm:text-5xl lg:text-6xl [animation-delay:120ms]">
+              <h1 className="mt-5 font-display text-[1.9rem] leading-[1.12] font-semibold text-white text-balance sm:text-5xl lg:text-6xl">
                 <span className="text-gold-gradient">{copy.title}</span>
               </h1>
 
-              <p className="mt-4 max-w-xl animate-hero-in text-[14px] leading-relaxed text-white/75 sm:mt-5 sm:text-lg [animation-delay:240ms]">
+              <p className="mt-4 max-w-xl text-[14px] leading-relaxed text-white/75 sm:mt-5 sm:text-lg">
                 {copy.description}
               </p>
 
-              <div className="mt-7 flex animate-hero-in flex-wrap items-center gap-4 [animation-delay:360ms]">
+              <div className="mt-7 flex flex-wrap items-center gap-4">
                 <Link href={HERO_ACTIONS.shop.href} prefetch className="btn-gold">
                   {HERO_ACTIONS.shop.label}
                 </Link>
@@ -142,7 +140,7 @@ export default function Hero({ initialSlides }: { initialSlides: string[] }) {
               type="button"
               onClick={() => go(-1)}
               aria-label="Previous slide"
-              className="absolute top-1/2 left-3 z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/30 bg-white/10 text-white backdrop-blur-md transition-all duration-300 hover:border-gold hover:bg-gold hover:text-ink sm:left-6 sm:flex sm:h-12 sm:w-12"
+              className="absolute top-1/2 left-3 z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/30 bg-white/10 text-white backdrop-blur-md transition-colors duration-200 hover:border-gold hover:bg-gold hover:text-ink sm:left-6 sm:flex sm:h-12 sm:w-12"
             >
               <ChevronLeftIcon className="h-5 w-5" />
             </button>
@@ -150,7 +148,7 @@ export default function Hero({ initialSlides }: { initialSlides: string[] }) {
               type="button"
               onClick={() => go(1)}
               aria-label="Next slide"
-              className="absolute top-1/2 right-3 z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/30 bg-white/10 text-white backdrop-blur-md transition-all duration-300 hover:border-gold hover:bg-gold hover:text-ink sm:right-6 sm:flex sm:h-12 sm:w-12"
+              className="absolute top-1/2 right-3 z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/30 bg-white/10 text-white backdrop-blur-md transition-colors duration-200 hover:border-gold hover:bg-gold hover:text-ink sm:right-6 sm:flex sm:h-12 sm:w-12"
             >
               <ChevronRightIcon className="h-5 w-5" />
             </button>
@@ -167,7 +165,7 @@ export default function Hero({ initialSlides }: { initialSlides: string[] }) {
                 onClick={() => setIndex(i)}
                 aria-label={`Go to slide ${i + 1}`}
                 aria-current={i === index}
-                className={`h-1.5 rounded-full transition-all duration-500 ${
+                className={`h-1.5 rounded-full transition-all duration-300 ${
                   i === index ? "w-9 bg-gold" : "w-3.5 bg-white/40 hover:bg-white/80"
                 }`}
               />

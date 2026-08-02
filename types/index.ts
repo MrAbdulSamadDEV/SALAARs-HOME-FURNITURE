@@ -21,7 +21,7 @@ export interface ProductItem {
   category: string;
   /** Product display name (from info.json or auto-generated) */
   name: string;
-  /** Optional price in VND – null means "price on request" */
+  /** Optional price in PKR – null means "price on request" */
   price: number | null;
   /** Public image path, e.g. "/products/bedroom-sets/1.jpg" */
   image: string;

@@ -18,7 +18,7 @@ export function buildWhatsAppLink(): string {
 
 /**
  * Formats a price for display.
- * Prices are treated as VND by default – change CURRENCY in src/data/settings.ts.
+ * Prices are treated as PKR by default – change CURRENCY in src/data/settings.ts.
  */
 export function formatPrice(price: number): string {
   return new Intl.NumberFormat(CURRENCY.locale, {

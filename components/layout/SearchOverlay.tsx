@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { getCategoryNavHref, NAV_CATEGORIES } from "@/data/category-navigation";
+import { getCategoryNavHref, HEADER_CATEGORIES } from "@/data/category-navigation";
 import { searchProducts } from "@/data/products";
 import { SEARCH, SEARCH_OVERLAY } from "@/data/settings";
 import { CloseIcon, SearchIcon } from "@/components/icons";
@@ -63,7 +63,7 @@ export default function SearchOverlay({ onClose }: { onClose: () => void }) {
 
       <form
         onSubmit={submit}
-        className="w-full max-w-2xl animate-fade-up rounded-3xl bg-white p-6 shadow-2xl sm:p-8"
+        className="w-full max-w-2xl rounded-3xl bg-white p-6 shadow-2xl sm:p-8"
       >
         <p className="eyebrow">
           <span className="h-px w-8 bg-gold-deep" aria-hidden="true" />
@@ -141,7 +141,7 @@ export default function SearchOverlay({ onClose }: { onClose: () => void }) {
             <span className="self-center text-[10px] font-semibold tracking-[0.2em] text-mist uppercase">
               {SEARCH_OVERLAY.popular}
             </span>
-            {NAV_CATEGORIES.map((cat) => (
+            {HEADER_CATEGORIES.map((cat) => (
               <Link
                 key={cat.slug}
                 href={getCategoryNavHref(cat.slug)}

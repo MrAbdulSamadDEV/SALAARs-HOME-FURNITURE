@@ -9,7 +9,7 @@ export const CONTACT = {
   /** Formatted for display. */
   phoneDisplay: "037 080 4453",
   /** International format for tel: links (no +, no leading 0). */
-  phoneIntl: "84370804453",
+  phoneIntl: "92370804453",
   /** Optional email – leave null to hide it. */
   email: null as string | null,
   /** Shown on the contact page and in the footer. */

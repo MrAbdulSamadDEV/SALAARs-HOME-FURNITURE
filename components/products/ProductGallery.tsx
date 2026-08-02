@@ -79,7 +79,7 @@ export default function ProductGallery({
                   fill
                   priority={i === 0}
                   sizes="(min-width: 1024px) 50vw, 100vw"
-                  className="object-contain p-4 transition-transform duration-700 ease-out will-change-transform group-hover:scale-[1.07] sm:p-6"
+                  className="object-contain p-4 transition-transform duration-300 ease-out group-hover:scale-[1.04] sm:p-6"
                 />
 
                 {/* Expand / zoom hint */}

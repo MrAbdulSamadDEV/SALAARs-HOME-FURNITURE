@@ -38,15 +38,15 @@ export default function PageHero({
           )}
 
           <Container className="relative">
-            <p className="eyebrow-dark animate-fade-up">
+            <p className="eyebrow-dark">
               <span className="h-px w-8 bg-gold" aria-hidden="true" />
               {eyebrow}
             </p>
-            <h1 className="max-w-3xl animate-fade-up font-display text-[2rem] leading-[1.12] font-semibold text-white text-balance sm:text-5xl lg:text-6xl [animation-delay:120ms]">
+            <h1 className="max-w-3xl font-display text-[2rem] leading-[1.12] font-semibold text-white text-balance sm:text-5xl lg:text-6xl">
               {title}
             </h1>
             {description && (
-              <p className="mt-6 max-w-2xl animate-fade-up text-[15px] leading-relaxed text-white/70 sm:text-lg [animation-delay:220ms]">
+              <p className="mt-6 max-w-2xl text-[15px] leading-relaxed text-white/70 sm:text-lg">
                 {description}
               </p>
             )}

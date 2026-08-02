@@ -4,6 +4,7 @@ import PageHero from "@/components/ui/PageHero";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import Container from "@/components/ui/Container";
 import Reveal from "@/components/ui/Reveal";
+import JsonLd from "@/components/seo/JsonLd";
 import FaqList from "@/components/home/FaqList";
 import { FAQ_GROUPS, FAQ_PAGE } from "@/data/faq";
 import { CONTACT } from "@/data/contact";
@@ -17,6 +18,17 @@ export const metadata: Metadata = {
   alternates: { canonical: "/faq" },
 };
 
+/** Structured data for search engines – FAQPage from FAQ_GROUPS. */
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: FAQ_GROUPS.flatMap((group) => group.items).map((item) => ({
+    "@type": "Question",
+    name: item.question,
+    acceptedAnswer: { "@type": "Answer", text: item.answer },
+  })),
+};
+
 export default function FaqPage() {
   const manifest = getManifest();
   const hero = FAQ_PAGE.hero;
@@ -24,6 +36,7 @@ export default function FaqPage() {
 
   return (
     <>
+      <JsonLd data={faqJsonLd} />
       <PageHero
         eyebrow={hero.eyebrow}
         title={hero.title}
@@ -35,8 +48,8 @@ export default function FaqPage() {
       <section className="bg-linen py-16 sm:py-20">
         <Container className="max-w-4xl">
           <div className="space-y-12">
-            {FAQ_GROUPS.map((group, i) => (
-              <Reveal key={group.title} delay={i * 60}>
+            {FAQ_GROUPS.map((group) => (
+              <Reveal key={group.title}>
                 <div>
                   <h2 className="mb-5 flex items-center gap-3 font-display text-xl font-semibold text-ink sm:text-2xl">
                     <span className="h-px w-8 bg-gold-deep" aria-hidden="true" />

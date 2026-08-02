@@ -12,7 +12,7 @@
  *
  * EDITABLE FIELDS (per product)
  * -----------------------------
- *   name, price (VND or null), image (path in /public), gallery (extra photos),
+ *   name, price (PKR or null), image (path in /public), gallery (extra photos),
  *   description, material, dimensions, color, deliveryTime, availability,
  *   tags { featured, bestSelling, isNew }, order (sorting position).
  *
@@ -180,7 +180,7 @@ export function getProductImages(product: ProductItem): string[] {
   return list;
 }
 
-/** Turns a VND price token like "25tr", "25 trieu", "25m" or "25.000.000" into a number. */
+/** Turns a compact price token like "250k", "1.5m" or "25 lacs" into a number (PKR). */
 function parsePriceToken(token: string): number | null {
   const t = token.replace(/,/g, ".").trim().toLowerCase();
   const match = t.match(/^(\d+(?:\.\d+)?)\s*(tr|trieu|triệu|m|milion|million|k|nghin)?$/);
@@ -213,7 +213,7 @@ export function matchesProductQuery(product: ProductItem, query: string): boolea
 
   if (haystack.some((text) => text.toLowerCase().includes(q))) return true;
 
-  /* Price matching – "25tr", "25m", "25.000.000" or raw digits */
+  /* Price matching – compact tokens like "250k", "1.5m" or raw digits */
   if (product.price !== null) {
     const token = parsePriceToken(q);
     if (token !== null && product.price === token) return true;

@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import Container from "@/components/ui/Container";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import Reveal from "@/components/ui/Reveal";
+import JsonLd from "@/components/seo/JsonLd";
 import ProductGallery from "@/components/products/ProductGallery";
 import RelatedProducts from "@/components/products/RelatedProducts";
 import { getCategory } from "@/data/categories";
@@ -56,21 +57,49 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const galleryImages = getProductImages(product);
   const related = getRelatedProducts(product);
 
-  /* Structured data for search engines */
-  const jsonLd = {
+  const productUrl = `${SITE.url}/product/${product.slug}`;
+  const schemaAvailability =
+    product.availability === "In Stock"
+      ? "https://schema.org/InStock"
+      : "https://schema.org/PreOrder";
+
+  /* Structured data for search engines – Product + BreadcrumbList. */
+  const productJsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
     name: product.name,
-    image: [product.image],
+    image: galleryImages.map((img) => `${SITE.url}${img}`),
     description: product.description ?? category?.short,
     brand: { "@type": "Brand", name: SITE.name },
+    category: category?.name ?? product.category,
+    material: product.material ?? category?.material,
+    color: product.color ?? undefined,
+    sku: product.id,
     offers: {
       "@type": "Offer",
-      price: product.price ?? undefined,
-      priceCurrency: "VND",
-      availability: "https://schema.org/InStock",
-      url: `${SITE.url}/product/${product.slug}`,
+      url: productUrl,
+      itemCondition: "https://schema.org/NewCondition",
+      availability: schemaAvailability,
+      ...(product.price
+        ? { price: product.price, priceCurrency: SITE.business.currency }
+        : {}),
     },
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: BREADCRUMB_HOME, item: SITE.url },
+      { "@type": "ListItem", position: 2, name: "Shop", item: `${SITE.url}/shop` },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: category?.name ?? "Products",
+        item: `${SITE.url}/${product.category}`,
+      },
+      { "@type": "ListItem", position: 4, name: product.name, item: productUrl },
+    ],
   };
 
   const specItems = [
@@ -123,7 +152,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             </Reveal>
 
             {/* Specifications */}
-            <Reveal delay={100}>
+            <Reveal>
               <div className="mt-10 overflow-hidden rounded-2xl bg-linen shadow-soft ring-1 ring-line">
                 {specItems.map(({ icon: Icon, label, value }, i) => (
                   <div
@@ -143,7 +172,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             </Reveal>
 
             {/* Features */}
-            <Reveal delay={140}>
+            <Reveal>
               <div className="mt-6 rounded-2xl bg-linen p-6 shadow-soft ring-1 ring-line">
                 <h2 className="text-[11px] font-semibold tracking-[0.25em] text-mist uppercase">
                   {PRODUCT_PAGE.featuresTitle}
@@ -162,7 +191,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             </Reveal>
 
             {/* Actions */}
-            <Reveal delay={180}>
+            <Reveal>
               <div className="mt-9 flex flex-wrap gap-4">
                 <a href={buildTelLink()} className="btn-gold">
                   <PhoneIcon className="h-4 w-4" />
@@ -180,7 +209,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
       <RelatedProducts products={related} />
 
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <JsonLd data={productJsonLd} />
+      <JsonLd data={breadcrumbJsonLd} />
     </>
   );
 }

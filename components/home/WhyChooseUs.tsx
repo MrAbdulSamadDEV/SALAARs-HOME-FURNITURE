@@ -28,15 +28,15 @@ export default function WhyChooseUs() {
 
         {/* Feature grid */}
         <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {FEATURES.map((feature, i) => (
-            <Reveal key={feature.title} delay={i * 70}>
+          {FEATURES.map((feature) => (
+            <Reveal key={feature.title}>
               <FeatureCard feature={feature} />
             </Reveal>
           ))}
         </div>
 
         {/* Stats band */}
-        <Reveal delay={120}>
+        <Reveal>
           <div className="mt-14 grid grid-cols-2 overflow-hidden rounded-3xl bg-ink shadow-card ring-1 ring-gold/30 sm:grid-cols-4">
             {STATS.map((stat) => (
               <div

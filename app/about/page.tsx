@@ -55,7 +55,7 @@ export default function AboutPage() {
             </div>
           </Reveal>
 
-          <Reveal delay={120}>
+          <Reveal>
             <div className="grid grid-cols-2 gap-4">
               {gallery.slice(0, 2).map((image, i) => (
                 <div
@@ -92,7 +92,7 @@ export default function AboutPage() {
               <p className="mt-5 leading-relaxed text-stone">{ABOUT_PAGE.mission.text}</p>
             </div>
           </Reveal>
-          <Reveal delay={100} className="h-full">
+          <Reveal className="h-full">
             <div className="card card-hover h-full p-8 sm:p-10">
               <p className="eyebrow">
                 <span className="h-px w-8 bg-gold-deep" aria-hidden="true" />
@@ -138,8 +138,8 @@ export default function AboutPage() {
           </Reveal>
 
           <div className="mt-12 grid items-stretch gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
-            {FEATURES.map((feature, i) => (
-              <Reveal key={feature.title} delay={i * 80} className="h-full">
+            {FEATURES.map((feature) => (
+              <Reveal key={feature.title} className="h-full">
                 <FeatureCard feature={feature} />
               </Reveal>
             ))}

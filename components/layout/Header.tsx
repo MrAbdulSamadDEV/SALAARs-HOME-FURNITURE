@@ -1,17 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import dynamic from "next/dynamic";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { getCategoryNavHref, NAV_CATEGORIES } from "@/data/category-navigation";
-import { NAV_LABELS, NAV_LINKS, PRIMARY_LINKS } from "@/data/navigation";
+import SearchOverlay from "./SearchOverlay";
+import { getCategoryNavHref, HEADER_CATEGORIES } from "@/data/category-navigation";
+import { NAV_LABELS, NAV_LINKS } from "@/data/navigation";
 import { CONTACT } from "@/data/contact";
 import { SITE } from "@/data/site";
+import { SOCIAL } from "@/data/social";
 import { buildTelLink, buildWhatsAppLink } from "@/utils/links";
 import {
-  ChevronDownIcon,
   CloseIcon,
   FacebookIcon,
   MenuIcon,
@@ -20,28 +20,30 @@ import {
   TikTokIcon,
   WhatsAppIcon,
 } from "@/components/icons";
-import { SOCIAL } from "@/data/social";
-
-/* Search overlay is only needed after the user opens it – load it lazily. */
-const SearchOverlay = dynamic(() => import("./SearchOverlay"), {
-  ssr: false,
-  loading: () => null,
-});
 
 /**
- * Premium sticky navbar – solid white with a subtle shadow and bottom border
- * from the very start. Includes search overlay, category dropdown and mobile menu.
+ * Premium sticky navbar – ONE compact row on every screen size.
+ *
+ * – Mobile: small logo (40px icon + stacked wordmark), search, Shop All,
+ *   hamburger – all on a single 64px line, no wrapping.
+ * – Desktop: logo left, Home/About/Shop/Contact/FAQ centered, search +
+ *   Shop All right (76px tall). No dropdowns – every link works on the
+ *   first click.
+ * – Mobile menu is a LEFT slide drawer (200ms) with overlay, ESC and
+ *   body-scroll lock; closes after any link click.
  */
 export default function Header({ logoUrl }: { logoUrl: string | null }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
 
+  /* Close everything on route change */
   useEffect(() => {
     setOpen(false);
     setSearchOpen(false);
   }, [pathname]);
 
+  /* Lock body scroll while the drawer or search overlay is open */
   useEffect(() => {
     document.body.style.overflow = open || searchOpen ? "hidden" : "";
     return () => {
@@ -49,17 +51,27 @@ export default function Header({ logoUrl }: { logoUrl: string | null }) {
     };
   }, [open, searchOpen]);
 
+  /* ESC closes the mobile drawer */
+  useEffect(() => {
+    if (!open) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [open]);
+
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);
 
   const linkClass = (href: string) =>
-    `relative py-2 text-[13px] font-semibold tracking-[0.02em] transition-colors duration-300 ${
+    `relative px-1.5 py-1 text-[13.5px] font-semibold tracking-[0.02em] transition-colors duration-200 ${
       isActive(href) ? "text-gold-deep" : "text-ink/75 hover:text-ink"
     }`;
 
   const indicator = (href: string) => (
     <span
-      className={`absolute inset-x-0 -bottom-0.5 h-[2px] origin-left rounded-full bg-gold transition-transform duration-300 ${
+      className={`absolute inset-x-1.5 -bottom-[7px] h-[2px] origin-left rounded-full bg-gold transition-transform duration-200 ${
         isActive(href) ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
       }`}
       aria-hidden="true"
@@ -67,78 +79,36 @@ export default function Header({ logoUrl }: { logoUrl: string | null }) {
   );
 
   return (
-    <header className="sticky top-0 z-50 border-b border-line bg-white shadow-soft">
-      <div className="mx-auto flex h-16 max-w-[1400px] items-center justify-between gap-6 px-4 sm:px-6 md:h-[72px] lg:px-8 xl:px-12">
-        {/* Logo */}
-        <Link href="/" prefetch className="group flex items-center gap-3">
+    <header className="sticky top-0 z-50 border-b border-line bg-white">
+      <div className="mx-auto flex h-16 max-w-[1400px] items-center justify-between gap-3 px-4 sm:gap-5 sm:px-6 md:h-[76px] lg:px-8 xl:px-12">
+        {/* Logo – compact, never wraps */}
+        <Link href="/" prefetch className="flex min-w-0 shrink items-center gap-2.5 sm:gap-3">
           {logoUrl ? (
             <Image
               src={logoUrl}
               alt={`${SITE.name} logo`}
-              width={46}
-              height={46}
-              className="h-11 w-11 rounded-xl object-contain"
+              width={44}
+              height={44}
+              className="h-10 w-10 shrink-0 rounded-xl object-contain md:h-11 md:w-11"
             />
           ) : (
-            <span className="flex h-11 w-11 items-center justify-center rounded-full border border-gold/50 bg-gold/10 font-display text-lg font-bold text-gold">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-gold/50 bg-gold/10 font-display text-base font-bold text-gold md:h-11 md:w-11 md:text-lg">
               S
             </span>
           )}
-          <span className="leading-none">
-            <span className="block font-display text-lg font-bold tracking-[0.04em] text-ink sm:text-xl">
+          <span className="flex min-w-0 flex-col leading-none">
+            <span className="truncate font-display text-[15px] font-bold tracking-[0.03em] whitespace-nowrap text-ink sm:text-[17px] md:text-lg">
               {SITE.name}
             </span>
-            <span className="mt-1 block text-[9px] font-semibold tracking-[0.32em] text-gold-deep uppercase">
+            <span className="mt-1 truncate text-[8px] font-semibold tracking-[0.26em] whitespace-nowrap text-gold-deep uppercase sm:text-[9px]">
               {SITE.taglineShort}
             </span>
           </span>
         </Link>
 
-        {/* Desktop nav */}
-        <nav className="hidden items-center gap-6 lg:flex xl:gap-7" aria-label="Main">
-          {PRIMARY_LINKS.filter((link) => ["/", "/about"].includes(link.href)).map((link) => (
-            <Link key={link.href} href={link.href} prefetch className={`group ${linkClass(link.href)}`}>
-              {link.label}
-              {indicator(link.href)}
-            </Link>
-          ))}
-
-          {/* Shop + Collections dropdown */}
-          <div className="group relative">
-            <Link href="/shop" prefetch className={`flex items-center gap-1.5 ${linkClass("/shop")}`}>
-              Shop
-              <ChevronDownIcon className="h-3.5 w-3.5 transition-transform duration-300 group-hover:rotate-180" />
-            </Link>
-            <div className="pointer-events-none invisible absolute top-full left-1/2 w-96 -translate-x-1/2 translate-y-3 overflow-hidden rounded-2xl border border-line bg-white opacity-0 shadow-card-hover transition-all duration-300 group-hover:pointer-events-auto group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
-              <p className="px-6 pt-4 pb-2 text-[10px] font-semibold tracking-[0.3em] text-mist uppercase">
-                {NAV_LABELS.collections}
-              </p>
-              <div className="grid grid-cols-2 border-b border-line/70">
-                {NAV_CATEGORIES.map((cat) => (
-                  <Link
-                    key={cat.slug}
-                    href={getCategoryNavHref(cat.slug)}
-                    prefetch
-                    className="group/cat flex items-center justify-between border-b border-line/70 px-6 py-3 text-[13px] font-medium text-ink/80 transition-colors even:border-l last:border-b-0 hover:bg-cream hover:text-gold-deep"
-                  >
-                    {cat.label}
-                    <span className="translate-x-1 text-gold opacity-0 transition-all duration-300 group-hover/cat:translate-x-0 group-hover/cat:opacity-100">
-                      →
-                    </span>
-                  </Link>
-                ))}
-              </div>
-              <Link
-                href="/shop"
-                prefetch
-                className="block bg-gold/10 px-6 py-3.5 text-[13px] font-semibold text-gold-deep transition-colors hover:bg-gold hover:text-ink"
-              >
-                {NAV_LABELS.viewAll}
-              </Link>
-            </div>
-          </div>
-
-          {NAV_LINKS.filter((link) => ["/contact", "/faq"].includes(link.href)).map((link) => (
+        {/* Desktop nav – flat links, no dropdowns */}
+        <nav className="hidden items-center gap-6 lg:flex xl:gap-8" aria-label="Main">
+          {NAV_LINKS.map((link) => (
             <Link key={link.href} href={link.href} prefetch className={`group ${linkClass(link.href)}`}>
               {link.label}
               {indicator(link.href)}
@@ -146,17 +116,21 @@ export default function Header({ logoUrl }: { logoUrl: string | null }) {
           ))}
         </nav>
 
-        {/* Right side */}
-        <div className="flex items-center gap-2.5 sm:gap-3">
+        {/* Right side – search, Shop All, hamburger */}
+        <div className="flex shrink-0 items-center gap-2 sm:gap-2.5">
           <button
             type="button"
             onClick={() => setSearchOpen(true)}
-            className="flex h-9 w-9 items-center justify-center rounded-full border border-line bg-white text-ink shadow-soft transition-all duration-300 hover:border-gold hover:text-gold-deep"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-line bg-white text-ink transition-colors duration-200 hover:border-gold hover:text-gold-deep"
             aria-label={NAV_LABELS.search}
           >
             <SearchIcon className="h-4 w-4" />
           </button>
-          <Link href="/shop" prefetch className="btn-gold hidden !px-6 !py-2.5 xl:inline-flex">
+          <Link
+            href="/shop"
+            prefetch
+            className="btn-gold !px-3.5 !py-2 !text-[10px] whitespace-nowrap sm:!px-5 sm:!py-2.5 sm:!text-[11px]"
+          >
             {NAV_LABELS.shopAll}
           </Link>
 
@@ -164,67 +138,71 @@ export default function Header({ logoUrl }: { logoUrl: string | null }) {
           <button
             type="button"
             onClick={() => setOpen(true)}
-            className="flex h-9 w-9 items-center justify-center rounded-full border border-line bg-white text-ink shadow-soft transition-all duration-300 hover:border-gold hover:text-gold-deep lg:hidden"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-line bg-white text-ink transition-colors duration-200 hover:border-gold hover:text-gold-deep lg:hidden"
             aria-label={NAV_LABELS.openMenu}
+            aria-expanded={open}
+            aria-controls="mobile-menu"
           >
             <MenuIcon className="h-5 w-5" />
           </button>
         </div>
       </div>
 
-      {/* Mobile menu overlay */}
+      {/* Mobile menu – left slide drawer */}
       <div
-        className={`fixed inset-0 z-[70] bg-ink/50 backdrop-blur-sm transition-opacity duration-300 lg:hidden ${
+        className={`fixed inset-0 z-[70] bg-ink/50 backdrop-blur-sm transition-opacity duration-200 lg:hidden ${
           open ? "opacity-100" : "pointer-events-none opacity-0"
         }`}
         onClick={() => setOpen(false)}
         aria-hidden="true"
       />
       <aside
-        className={`fixed top-0 right-0 z-[70] flex h-full w-[88%] max-w-md flex-col overflow-y-auto overscroll-contain bg-white text-ink shadow-2xl transition-transform duration-400 ease-out lg:hidden ${
-          open ? "translate-x-0" : "pointer-events-none translate-x-full"
-        }`}
+        id="mobile-menu"
+        role="dialog"
+        aria-modal="true"
         aria-label="Mobile menu"
+        className={`fixed top-0 left-0 z-[70] flex h-full w-[85%] max-w-sm flex-col overflow-y-auto overscroll-contain bg-white text-ink shadow-2xl transition-transform duration-200 ease-out lg:hidden ${
+          open ? "translate-x-0" : "pointer-events-none -translate-x-full"
+        }`}
       >
-        <div className="flex items-center justify-between border-b border-line px-6 py-5">
-          <span className="font-display text-lg font-bold">
+        <div className="flex shrink-0 items-center justify-between border-b border-line px-5 py-4 sm:px-6">
+          <span className="truncate font-display text-lg font-bold">
             {SITE.name} <span className="text-gold-deep">·</span>
           </span>
           <button
             type="button"
             onClick={() => setOpen(false)}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-line text-ink transition-colors hover:border-gold hover:text-gold-deep"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-line text-ink transition-colors hover:border-gold hover:text-gold-deep"
             aria-label={NAV_LABELS.closeMenu}
           >
             <CloseIcon className="h-5 w-5" />
           </button>
         </div>
 
-        <nav className="flex-1 px-6 py-6" aria-label="Mobile">
-          <p className="mb-2 text-[10px] font-semibold tracking-[0.3em] text-mist uppercase">
-            Menu
+        <nav className="flex-1 overflow-y-auto px-5 py-5 sm:px-6" aria-label="Mobile">
+          <p className="mb-1 text-[10px] font-semibold tracking-[0.3em] text-mist uppercase">
+            {NAV_LABELS.menu}
           </p>
-          {NAV_LINKS.map((link, i) => (
+          {NAV_LINKS.map((link) => (
             <Link
               key={link.href}
               href={link.href}
               prefetch
               onClick={() => setOpen(false)}
               aria-current={isActive(link.href) ? "page" : undefined}
-              style={{ transitionDelay: open ? `${80 + i * 45}ms` : "0ms" }}
-              className={`flex items-center justify-between border-b border-line/70 py-3.5 font-display text-lg transition-all duration-500 ${
+              className={`flex items-center justify-between border-b border-line/70 py-3.5 font-display text-lg transition-colors duration-200 ${
                 isActive(link.href) ? "text-gold-deep" : "text-ink hover:text-gold-deep"
-              } ${open ? "translate-x-0 opacity-100" : "translate-x-6 opacity-0"}`}
+              }`}
             >
               {link.label}
               <span className="text-gold/50">→</span>
             </Link>
           ))}
 
-          <p className="mt-8 mb-2 text-[10px] font-semibold tracking-[0.3em] text-mist uppercase">
+          <p className="mt-6 mb-1 text-[10px] font-semibold tracking-[0.3em] text-mist uppercase">
             {NAV_LABELS.collections}
           </p>
-          {NAV_CATEGORIES.map((cat, i) => {
+          {HEADER_CATEGORIES.map((cat) => {
             const href = getCategoryNavHref(cat.slug);
             return (
               <Link
@@ -233,10 +211,9 @@ export default function Header({ logoUrl }: { logoUrl: string | null }) {
                 prefetch
                 onClick={() => setOpen(false)}
                 aria-current={isActive(href) ? "page" : undefined}
-                style={{ transitionDelay: open ? `${320 + i * 40}ms` : "0ms" }}
-                className={`flex items-center justify-between border-b border-line/70 py-3 text-[15px] transition-all duration-500 hover:text-gold-deep ${
+                className={`flex items-center justify-between border-b border-line/70 py-3 text-[15px] transition-colors duration-200 hover:text-gold-deep ${
                   isActive(href) ? "font-semibold text-gold-deep" : "text-stone"
-                } ${open ? "translate-x-0 opacity-100" : "translate-x-6 opacity-0"}`}
+                }`}
               >
                 {cat.label}
                 <span className="text-gold/50">→</span>
@@ -245,7 +222,7 @@ export default function Header({ logoUrl }: { logoUrl: string | null }) {
           })}
         </nav>
 
-        <div className="border-t border-line px-6 py-5">
+        <div className="shrink-0 border-t border-line px-5 py-4 sm:px-6">
           <a
             href={buildTelLink()}
             className="flex w-full items-center justify-center gap-2 rounded-full border border-ink/20 px-4 py-3 text-xs font-semibold tracking-[0.12em] text-ink uppercase transition-colors hover:border-gold hover:text-gold-deep"

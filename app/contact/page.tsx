@@ -3,6 +3,7 @@ import PageHero from "@/components/ui/PageHero";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import Container from "@/components/ui/Container";
 import Reveal from "@/components/ui/Reveal";
+import JsonLd from "@/components/seo/JsonLd";
 import { CONTACT, CONTACT_PAGE } from "@/data/contact";
 import { PAGE_SEO } from "@/data/seo";
 import { SITE } from "@/data/site";
@@ -19,8 +20,49 @@ import {
 
 export const metadata: Metadata = {
   title: PAGE_SEO.contact.title,
-  description: `Get in touch with ${SITE.name} – visit the showroom or call us on ${CONTACT.phoneDisplay}. We usually reply within minutes.`,
+  description: `Get in touch with ${SITE.name} in Karachi – visit the showroom or call us on ${CONTACT.phoneDisplay}. We usually reply within minutes.`,
   alternates: { canonical: "/contact" },
+};
+
+/** Structured data for search engines – ContactPage. */
+const contactJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ContactPage",
+  name: `Contact ${SITE.name}`,
+  url: `${SITE.url}/contact`,
+  description: PAGE_SEO.contact.description,
+  mainEntity: {
+    "@type": "FurnitureStore",
+    "@id": `${SITE.url}/#furniturestore`,
+    name: SITE.name,
+    url: SITE.url,
+    telephone: `+${CONTACT.phoneIntl}`,
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: SITE.business.address.streetAddress,
+      addressLocality: SITE.business.address.addressLocality,
+      addressRegion: SITE.business.address.addressRegion,
+      postalCode: SITE.business.address.postalCode,
+      addressCountry: SITE.business.address.addressCountry,
+    },
+    openingHoursSpecification: [
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+          "Sunday",
+        ],
+        opens: "08:00",
+        closes: "21:00",
+      },
+    ],
+    sameAs: [SOCIAL.facebook.url, SOCIAL.tiktok.url],
+  },
 };
 
 /** Icon map for the data-driven contact cards (keys stored in src/data/contact.ts). */
@@ -85,6 +127,7 @@ export default function ContactPage() {
 
   return (
     <>
+      <JsonLd data={contactJsonLd} />
       <PageHero
         eyebrow={CONTACT_PAGE.hero.eyebrow}
         title={CONTACT_PAGE.hero.title}
@@ -97,10 +140,10 @@ export default function ContactPage() {
       <section className="bg-linen py-16 sm:py-20">
         <Container>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {contactItems.map((item, i) => {
+            {contactItems.map((item) => {
               const Icon = item.icon;
               return (
-                <Reveal key={item.title} delay={i * 70} className="h-full">
+                <Reveal key={item.title} className="h-full">
                   <div className="card card-hover flex h-full flex-col p-8">
                     <span className="flex h-13 w-13 items-center justify-center rounded-2xl bg-gold-pale text-gold-deep">
                       <Icon className="h-6 w-6" />
